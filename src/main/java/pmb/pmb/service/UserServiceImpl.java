@@ -157,27 +157,26 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public ArrayList<UserReferenceTransaction> listReferenceTransaction() {
-		UserReferenceTransaction userReferenceTransaction = new UserReferenceTransaction();
 		ArrayList<UserReferenceTransaction> listUserReferenceTransactions = new ArrayList<>();
 		List<User> listUser = userRepository.findAll();
 		if (listUser.isEmpty()) {
 			ResponseEntity.status(HttpStatus.NO_CONTENT).body("not user found");
 		}
-
-
-			
-			for (int i = 0; i < listUser.size(); i++) {
-				userReferenceTransaction.setAccountReferenceTransaction(listUser.get(i).getUserAccountInformations().getAccountReferenceTransaction());
-				userReferenceTransaction.setDisplayName(listUser.get(i).getDisplayName());
-				if (userReferenceTransaction != null) {
+			for(User u: listUser) {
+				UserReferenceTransaction userReferenceTransaction = new UserReferenceTransaction();
+				userReferenceTransaction.setAccountReferenceTransaction(u.getUserAccountInformations().getAccountReferenceTransaction());
+				userReferenceTransaction.setDisplayName(u.getDisplayName());
+				  
+				if (!listUserReferenceTransactions.contains(userReferenceTransaction)) {
 					listUserReferenceTransactions.add(userReferenceTransaction);
+					//listUserReferenceTransactions.add(userReferenceTransaction);
 				}
-				 
-			 //   System.out.println(listUser.get(i));
-		
+				System.out.println("================" + listUserReferenceTransactions);
 			}
+
+	
 		   
-		    System.out.println("%%%%%%%%%%%%%%%%%%%%" + listUserReferenceTransactions);
+		  
 	
 		if (listUserReferenceTransactions.isEmpty()) {
 			ResponseEntity.status(HttpStatus.NO_CONTENT).body("not list user found");
