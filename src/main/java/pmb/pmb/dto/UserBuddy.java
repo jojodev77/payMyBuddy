@@ -6,7 +6,8 @@ import lombok.Data;
 
 @Data
 public class UserBuddy {
-	User userGetter;
-	User userSetter;
+	String userGetter;
+	String userSetter;
+	double account;
 
 }

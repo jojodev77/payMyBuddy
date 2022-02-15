@@ -9,5 +9,5 @@ import pmb.pmb.dto.UserPartner;
 public interface TransacService {
 	public String addUserBuddy(AddBuddy buddy);
 	public Set<UserPartner> listUserPartner(long id);
-	public String requestTransaction(UserBuddy userBuddy, double amount);
+	public String requestTransaction(UserBuddy buddy);
 }

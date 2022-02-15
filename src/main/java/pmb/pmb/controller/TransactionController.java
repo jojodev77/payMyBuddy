@@ -31,9 +31,10 @@ public class TransactionController {
 	}
 	
 	@PostMapping("/user/transactionAccount")
-	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> startTransaction(@RequestBody UserBuddy userGetter, double amount ) {
-		return ResponseEntity.ok(transactionService.requestTransaction(userGetter, amount));
+//	@PreAuthorize("hasRole('USER')")
+	public String startTransaction( @RequestBody UserBuddy userGetter ) {
+		System.out.println("|||||||||||||" + userGetter);
+		return transactionService.requestTransaction(userGetter);
 	}
 	
 	@PostMapping("/user/getListBuddy")

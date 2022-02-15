@@ -58,15 +58,10 @@ public class TransactionService implements TransacService {
 
 			}
 			User ux = userRepository.findByUserReferenceTransaction(buddy.getUserSetter());
-			System.out.println("€€€€€€€€€€€€€€" + ux);
 
 			for (UserPartnerAccount us : listUserParterAccount) {
-
-				System.out.println("}}}}}}}}}}}}} °°°°" + us);
 				ux.getUserAccountInformations().getUserPartner_account().add(us);
 			}
-			// u.getUserAccountInformations().setUserPartner_account(listUserParterAccount);
-			System.out.println("##{{#{" + u.getUserAccountInformations().getUserPartner_account());
 			userRepository.save(ux);
 
 		}
@@ -74,22 +69,28 @@ public class TransactionService implements TransacService {
 		return "buddy add  with success";
 	}
 
-	@Transactional()
-	public String requestTransaction(UserBuddy userBuddy, double amount) {
-		double finalyAmount = amount + AppConstants.TAXATION_TRANSACTION / 100;
-		Optional<User> userG = userRepository.findById(userBuddy.getUserGetter().getId());
-		Optional<User> userS = userRepository.findById(userBuddy.getUserSetter().getId());
+	@Transactional
+	public String requestTransaction(UserBuddy buddy) {
+		double finalyAmount = buddy.getAccount() + AppConstants.TAXATION_TRANSACTION / 100;
+		Optional<User> userG = Optional
+				.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
+		Optional<User> userS = Optional
+				.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
 		if (userG.get().getUserAccountInformations().getSoldAccount() - finalyAmount < 0) {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("you do not have the necessary means");
 		} else {
 			userG.get().getUserAccountInformations()
-					.setSoldAccount((int) (userG.get().getUserAccountInformations().getSoldAccount() - finalyAmount));
+					.setSoldAccount((int) (userG.get().getUserAccountInformations().getSoldAccount() + finalyAmount));
 			userS.get().getUserAccountInformations()
-					.setSoldAccount((int) (userS.get().getUserAccountInformations().getSoldAccount() + finalyAmount));
+					.setSoldAccount((int) (userS.get().getUserAccountInformations().getSoldAccount() - finalyAmount));
 			HistoryTransaction historyTransaction = new HistoryTransaction();
 			historyTransaction.setDate(LocalDateTime.now());
+			historyTransaction.setUser_account_informations(userS.get().getUserAccountInformations());
 			historyTransaction.setAccount_reference_transaction(
 					userS.get().getUserAccountInformations().getAccountReferenceTransaction());
+			userS.get().getUserAccountInformations().setHistoryTransaction(historyTransaction);
+			userRepository.save(userS.get());
+			userRepository.save(userG.get());
 		}
 		return "transfert with success";
 	}
@@ -99,12 +100,12 @@ public class TransactionService implements TransacService {
 		Optional<User> user = userRepository.findById(id);
 		UserPartner userPartner = new UserPartner();
 		Set<UserPartner> listUserPartner = new HashSet<UserPartner>();
-		for(UserPartnerAccount u: user.get().getUserAccountInformations().getUserPartner_account()) {
-		userPartner.setDisplayName(u.getDisplayName());
-		userPartner.setUserRefTransaction(u.getUserAccountInformations().getAccountReferenceTransaction());
-		listUserPartner.add(userPartner);
+		for (UserPartnerAccount u : user.get().getUserAccountInformations().getUserPartner_account()) {
+			userPartner.setDisplayName(u.getDisplayName());
+			userPartner.setUserRefTransaction(u.getUserAccountInformations().getAccountReferenceTransaction());
+			listUserPartner.add(userPartner);
 		}
-		
+
 		return listUserPartner;
 	}
 
