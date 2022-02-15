@@ -1,5 +1,9 @@
 package pmb.pmb.model;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -17,7 +22,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Table(name = "userAccountInformations")
-public class UserAccountInformations {
+public class UserAccountInformations implements Serializable {
+	
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "UserAccountInformations_ID")
+	long id;
+	
 	public long getId() {
 		return id;
 	}
@@ -58,11 +70,11 @@ public class UserAccountInformations {
 		this.soldAccount = soldAccount;
 	}
 
-	public UserPartnerAccount getUserPartner_account() {
+	public Set<UserPartnerAccount> getUserPartner_account() {
 		return userPartner_account;
 	}
 
-	public void setUserPartner_account(UserPartnerAccount userPartner_account) {
+	public void setUserPartner_account(Set<UserPartnerAccount> userPartner_account) {
 		this.userPartner_account = userPartner_account;
 	}
 
@@ -82,11 +94,6 @@ public class UserAccountInformations {
 		this.state = state;
 	}
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "UserAccountInformations_ID")
-	long id;
-	
 	@OneToOne
 	User user;
 	
@@ -96,8 +103,8 @@ public class UserAccountInformations {
 	
 	int soldAccount;
 	
-	@OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-	UserPartnerAccount userPartner_account;
+	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+	private Set<UserPartnerAccount> userPartner_account;
 	
 	@OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
 	HistoryTransaction historyTransaction;

@@ -38,10 +38,7 @@ import pmb.pmb.security.oauth2.user.OAuth2UserInfo;
 import pmb.pmb.security.oauth2.user.OAuth2UserInfoFactory;
 import pmb.pmb.util.GeneralUtils;
 
-/**
- * @author Chinna
- * @since 26/3/18
- */
+
 @Service
 public class UserServiceImpl implements UserService {
 

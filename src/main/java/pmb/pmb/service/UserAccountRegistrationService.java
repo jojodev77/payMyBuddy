@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import pmb.pmb.dto.SignUpRequest;
 import pmb.pmb.model.User;
 import pmb.pmb.model.UserAccountInformations;
-import pmb.pmb.model.UserPersonnalInformations;
+
 
 @Service
 public class UserAccountRegistrationService {

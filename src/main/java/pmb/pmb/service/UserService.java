@@ -15,10 +15,7 @@ import pmb.pmb.dto.UserReferenceTransaction;
 import pmb.pmb.exception.UserAlreadyExistAuthenticationException;
 import pmb.pmb.model.User;
 
-/**
- * @author Chinna
- * @since 26/3/18
- */
+
 public interface UserService {
 
 	public User registerNewUser(SignUpRequest signUpRequest) throws UserAlreadyExistAuthenticationException;
