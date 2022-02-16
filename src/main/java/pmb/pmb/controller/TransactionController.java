@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import pmb.pmb.dto.AddBuddy;
+import pmb.pmb.dto.AddCash;import pmb.pmb.dto.HistoryResponse;
 import pmb.pmb.dto.UserBuddy;
 import pmb.pmb.dto.UserPartner;
 import pmb.pmb.service.TransacService;
@@ -30,10 +31,15 @@ public class TransactionController {
 		return transactionService.addUserBuddy(buddy);
 	}
 	
+	@PostMapping("/user/history")
+//	@PreAuthorize("hasRole('USER')")
+	public Set<HistoryResponse> getHistory( @RequestBody UserBuddy userGetter ) {
+		return transactionService.getListHistory(userGetter);
+	}
+	
 	@PostMapping("/user/transactionAccount")
 //	@PreAuthorize("hasRole('USER')")
 	public String startTransaction( @RequestBody UserBuddy userGetter ) {
-		System.out.println("|||||||||||||" + userGetter);
 		return transactionService.requestTransaction(userGetter);
 	}
 	
@@ -41,5 +47,11 @@ public class TransactionController {
 	@PreAuthorize("hasRole('USER')")
 	public Set<UserPartner> getListBuddy( @RequestBody long id ) {
 		return transactionService.listUserPartner(id);
+	}
+	
+	@PostMapping("/user/addCash")
+//	@PreAuthorize("hasRole('USER')")
+	public String addCash( @RequestBody AddCash cash ) {
+		return transactionService.addCash(cash);
 	}
 }

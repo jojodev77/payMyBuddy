@@ -36,6 +36,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(	name = "user")
+@Getter
+@Setter
 public class User implements Serializable {
 
 	/**

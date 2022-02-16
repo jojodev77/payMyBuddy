@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import pmb.pmb.config.AppConstants;
 import pmb.pmb.dto.AddBuddy;
+import pmb.pmb.dto.AddCash;
+import pmb.pmb.dto.HistoryResponse;
 import pmb.pmb.dto.UserBuddy;
 import pmb.pmb.dto.UserPartner;
 import pmb.pmb.model.HistoryTransaction;
@@ -42,9 +44,15 @@ public class TransactionService implements TransacService {
 	@Autowired
 	UserAccountInfomationsRepository userAccountInfomationsRepository;
 
+	/**
+	 * @Description add a buddy for transaction
+	 */
 	@Transactional()
 	public String addUserBuddy(AddBuddy buddy) {
 		List<User> listUser = userRepository.findAll();
+		if (listUser.size() < 0) {
+			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not account situation found");
+		}
 		for (User u : listUser) {
 			UserPartnerAccount userPartnerAccount = new UserPartnerAccount();
 			Set<UserPartnerAccount> listUserParterAccount = new HashSet<UserPartnerAccount>();
@@ -58,6 +66,9 @@ public class TransactionService implements TransacService {
 
 			}
 			User ux = userRepository.findByUserReferenceTransaction(buddy.getUserSetter());
+			if (ux == null) {
+				ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("user not found");
+			}
 
 			for (UserPartnerAccount us : listUserParterAccount) {
 				ux.getUserAccountInformations().getUserPartner_account().add(us);
@@ -69,6 +80,9 @@ public class TransactionService implements TransacService {
 		return "buddy add  with success";
 	}
 
+	/**
+	 * 
+	 */
 	@Transactional
 	public String requestTransaction(UserBuddy buddy) {
 		double finalyAmount = buddy.getAccount() + AppConstants.TAXATION_TRANSACTION / 100;
@@ -89,7 +103,13 @@ public class TransactionService implements TransacService {
 			historyTransaction.setAccount_reference_transaction(
 					userS.get().getUserAccountInformations().getAccountReferenceTransaction());
 			userS.get().getUserAccountInformations().setHistoryTransaction(historyTransaction);
+			if (!userS.isPresent()) {
+				ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not user setter found");
+			}
 			userRepository.save(userS.get());
+			if (!userG.isPresent()) {
+				ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not user getter found");
+			}
 			userRepository.save(userG.get());
 		}
 		return "transfert with success";
@@ -98,6 +118,9 @@ public class TransactionService implements TransacService {
 	@Override
 	public Set<UserPartner> listUserPartner(long id) {
 		Optional<User> user = userRepository.findById(id);
+		if (!user.isPresent()) {
+			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not list user found");
+		}
 		UserPartner userPartner = new UserPartner();
 		Set<UserPartner> listUserPartner = new HashSet<UserPartner>();
 		for (UserPartnerAccount u : user.get().getUserAccountInformations().getUserPartner_account()) {
@@ -108,5 +131,37 @@ public class TransactionService implements TransacService {
 
 		return listUserPartner;
 	}
+
+	@Override
+	public String addCash(AddCash cash) {
+		Optional<User> user = Optional.ofNullable(userRepository.findByUserReferenceTransaction(cash.getUserGetter()));
+		if (!user.isPresent()) {
+			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not account situation found");
+		} else {
+			user.get().getUserAccountInformations().setSoldAccount((int) (user.get().getUserAccountInformations().getSoldAccount() + cash.getAmount()));
+			userRepository.save(user.get());
+		}
+		return "successfully add money";
+	}
+
+	@Override
+	public Set<HistoryResponse> getListHistory(UserBuddy buddy) {
+		Set<HistoryResponse> listHistoryResponse = new HashSet<>();
+		Optional<User> user = Optional
+				.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
+		if (!user.isPresent()) {
+			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not user found");
+		} else {
+			HistoryResponse hr = new HistoryResponse();
+			hr.setDate(user.get().getUserAccountInformations().getHistoryTransaction().getDate());
+			hr.setAccountReferenceTransaction(user.get().getUserAccountInformations().getAccountReferenceTransaction());
+			hr.setSoldAccount(user.get().getUserAccountInformations().getSoldAccount());
+			listHistoryResponse.add(hr);
+		}
+		
+		return listHistoryResponse;
+	}
+	
+	
 
 }
