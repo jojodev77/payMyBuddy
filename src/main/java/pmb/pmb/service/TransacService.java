@@ -2,6 +2,7 @@ package pmb.pmb.service;
 
 import java.util.Set;
 
+import pmb.pmb.dto.AccountSituation;
 import pmb.pmb.dto.AddBuddy;
 import pmb.pmb.dto.AddCash;
 import pmb.pmb.dto.HistoryResponse;
@@ -14,4 +15,5 @@ public interface TransacService {
 	public String requestTransaction(UserBuddy buddy);
 	public String addCash(AddCash cash);
 	public Set<HistoryResponse> getListHistory(UserBuddy buddy);
+	public AccountSituation accountSituation(UserBuddy buddy);
 }

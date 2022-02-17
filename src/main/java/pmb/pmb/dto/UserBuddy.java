@@ -8,6 +8,6 @@ import lombok.Data;
 public class UserBuddy {
 	String userGetter;
 	String userSetter;
-	double account;
+	double amount;
 
 }

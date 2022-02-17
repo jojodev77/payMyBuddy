@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import pmb.pmb.config.AppConstants;
+import pmb.pmb.dto.AccountSituation;
 import pmb.pmb.dto.AddBuddy;
 import pmb.pmb.dto.AddCash;
 import pmb.pmb.dto.HistoryResponse;
@@ -85,31 +86,27 @@ public class TransactionService implements TransacService {
 	 */
 	@Transactional
 	public String requestTransaction(UserBuddy buddy) {
-		double finalyAmount = buddy.getAccount() + AppConstants.TAXATION_TRANSACTION / 100;
+	System.out.println("@@@@@@@@@@@@@@" + buddy);
 		Optional<User> userG = Optional
-				.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
+				.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserGetter()));
+		
 		Optional<User> userS = Optional
 				.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
-		if (userG.get().getUserAccountInformations().getSoldAccount() - finalyAmount < 0) {
+		if (userS.get().getUserAccountInformations().getSoldAccount() - buddy.getAmount() < 0) {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("you do not have the necessary means");
 		} else {
+			System.out.println("######################" + userG.get().getUserAccountInformations().getSoldAccount() + "test" + buddy.getAmount());
 			userG.get().getUserAccountInformations()
-					.setSoldAccount((int) (userG.get().getUserAccountInformations().getSoldAccount() + finalyAmount));
+					.setSoldAccount((int) (userG.get().getUserAccountInformations().getSoldAccount() + buddy.getAmount()));
 			userS.get().getUserAccountInformations()
-					.setSoldAccount((int) (userS.get().getUserAccountInformations().getSoldAccount() - finalyAmount));
+					.setSoldAccount((int) (userS.get().getUserAccountInformations().getSoldAccount() - buddy.getAmount()));
 			HistoryTransaction historyTransaction = new HistoryTransaction();
 			historyTransaction.setDate(LocalDateTime.now());
 			historyTransaction.setUser_account_informations(userS.get().getUserAccountInformations());
 			historyTransaction.setAccount_reference_transaction(
 					userS.get().getUserAccountInformations().getAccountReferenceTransaction());
-			userS.get().getUserAccountInformations().setHistoryTransaction(historyTransaction);
-			if (!userS.isPresent()) {
-				ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not user setter found");
-			}
+			userS.get().getUserAccountInformations().getHistoryTransaction().add(historyTransaction);
 			userRepository.save(userS.get());
-			if (!userG.isPresent()) {
-				ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not user getter found");
-			}
 			userRepository.save(userG.get());
 		}
 		return "transfert with success";
@@ -152,14 +149,30 @@ public class TransactionService implements TransacService {
 		if (!user.isPresent()) {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not user found");
 		} else {
+			for(HistoryTransaction h: user.get().getUserAccountInformations().getHistoryTransaction()) {
 			HistoryResponse hr = new HistoryResponse();
-			hr.setDate(user.get().getUserAccountInformations().getHistoryTransaction().getDate());
+			hr.setDate(h.getDate());
 			hr.setAccountReferenceTransaction(user.get().getUserAccountInformations().getAccountReferenceTransaction());
-			hr.setSoldAccount(user.get().getUserAccountInformations().getSoldAccount());
+			hr.setSoldAccount(h.getSoldAccount());
 			listHistoryResponse.add(hr);
+			}
 		}
 		
 		return listHistoryResponse;
+	}
+
+	@Override
+	public AccountSituation accountSituation(UserBuddy buddy) {
+		AccountSituation accountSituation = new AccountSituation();
+		Optional<User> user = Optional
+				.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
+		if (!user.isPresent()) {
+			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not user found");
+		} else {
+	
+			accountSituation.setSoldAccount(user.get().getUserAccountInformations().getSoldAccount());
+		}
+		return accountSituation;
 	}
 	
 	

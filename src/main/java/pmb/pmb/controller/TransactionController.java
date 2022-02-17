@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import pmb.pmb.dto.AccountSituation;
 import pmb.pmb.dto.AddBuddy;
 import pmb.pmb.dto.AddCash;import pmb.pmb.dto.HistoryResponse;
 import pmb.pmb.dto.UserBuddy;
@@ -37,10 +38,17 @@ public class TransactionController {
 		return transactionService.getListHistory(userGetter);
 	}
 	
-	@PostMapping("/user/transactionAccount")
+	@PostMapping("/user/startTransaction")
 //	@PreAuthorize("hasRole('USER')")
 	public String startTransaction( @RequestBody UserBuddy userGetter ) {
+		System.out.println("||||||||||||||||||-" + userGetter);
 		return transactionService.requestTransaction(userGetter);
+	}
+	
+	@PostMapping("/user/accountSituation")
+//	@PreAuthorize("hasRole('USER')")
+	public AccountSituation accountSituation( @RequestBody UserBuddy buddy ) {
+		return transactionService.accountSituation(buddy);
 	}
 	
 	@PostMapping("/user/getListBuddy")

@@ -78,11 +78,11 @@ public class UserAccountInformations implements Serializable {
 		this.userPartner_account = userPartner_account;
 	}
 
-	public HistoryTransaction getHistoryTransaction() {
+	public Set<HistoryTransaction> getHistoryTransaction() {
 		return historyTransaction;
 	}
 
-	public void setHistoryTransaction(HistoryTransaction historyTransaction) {
+	public void setHistoryTransaction(Set<HistoryTransaction> historyTransaction) {
 		this.historyTransaction = historyTransaction;
 	}
 
@@ -106,8 +106,8 @@ public class UserAccountInformations implements Serializable {
 	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
 	private Set<UserPartnerAccount> userPartner_account;
 	
-	@OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-	HistoryTransaction historyTransaction;
+	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+	Set<HistoryTransaction> historyTransaction;
 	
 	boolean state;
 	
