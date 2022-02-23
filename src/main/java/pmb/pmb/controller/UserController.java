@@ -2,8 +2,7 @@ package pmb.pmb.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-
-
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nimbusds.openid.connect.sdk.claims.UserInfo;
+
 import pmb.pmb.config.CurrentUser;
 import pmb.pmb.dto.JwtUserResponse;
 import pmb.pmb.dto.LocalUser;
@@ -24,6 +25,7 @@ import pmb.pmb.dto.LoginRequest;
 import pmb.pmb.dto.UserBuddy;
 import pmb.pmb.dto.UserReferenceTransaction;
 import pmb.pmb.model.User;
+import pmb.pmb.repo.UserRepository;
 import pmb.pmb.service.TransactionService;
 import pmb.pmb.service.UserService;
 import pmb.pmb.util.GeneralUtils;
@@ -37,35 +39,35 @@ public class UserController {
 	@Autowired
 	UserService userService;
 	
+	@Autowired
+	UserRepository userRepository;
 
-
-//	@GetMapping("/user/me")
-//	@PreAuthorize("hasRole('USER')")
-//	public ResponseEntity<?> getCurrentUser( LocalUser user) {
-//		System.out.println("###########" + user.getUser());
-//		return ResponseEntity.ok(userService.getJwtUserResponseByEmail(user.getAccessTokenHash(), user.getEmail()));
-//	}
-//	
 	@GetMapping("/user/listUserReferenceTransaction")
 	@PreAuthorize("hasRole('USER')")
 	public List<UserReferenceTransaction>  getListUserReferenceTransaction( ) {
 		return userService.listReferenceTransaction();
 	}
 	
-
-//	
-//	@PostMapping("/signin/socialLogin")
-//	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-//		
-//		System.out.println("resultCont2r!!!!!!" + userService.getJwtUserResponseByEmail(jwt, loginRequest.getEmail()));
-//		return ResponseEntity.ok(userService.getJwtUserResponseByEmail(jwt, loginRequest.getEmail()));
-//	}
+	
+	@PostMapping("/user/getUserInformations")
+	//@PreAuthorize("hasRole('USER')")
+	public JwtUserResponse  getUserInformations(@RequestBody String email) {
+		System.out.println("]##@@###############" + email);
+		return userService.getUserByEmail(email);
+	}
 	
 	
+	/**
+	 * @Description controller for get informations when user is connect with social login
+	 * @param user
+	 * @return
+	 */
 	@GetMapping("/user/me")
 	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?> getCurrentUser(@CurrentUser LocalUser user) {
-		return ResponseEntity.ok(GeneralUtils.buildUserInfo(user));
+	System.out.println("~~~~~~~~~~~~~~~~~éééé" + GeneralUtils.buildUserInfo(user));
+	
+	return ResponseEntity.ok(GeneralUtils.buildUserInfo(user));
 	}
 
 	@GetMapping("/all")
@@ -73,21 +75,10 @@ public class UserController {
 		return ResponseEntity.ok("Public content goes here");
 	}
 
+	
 	@GetMapping("/user")
 	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?> getUserContent() {
 		return ResponseEntity.ok("User content goes here");
-	}
-
-	@GetMapping("/admin")
-	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<?> getAdminContent() {
-		return ResponseEntity.ok("Admin content goes here");
-	}
-
-	@GetMapping("/mod")
-	@PreAuthorize("hasRole('MODERATOR')")
-	public ResponseEntity<?> getModeratorContent() {
-		return ResponseEntity.ok("Moderator content goes here");
 	}
 }

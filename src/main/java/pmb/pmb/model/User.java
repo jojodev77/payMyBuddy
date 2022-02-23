@@ -38,6 +38,7 @@ import lombok.Setter;
 @Table(	name = "user")
 @Getter
 @Setter
+@Data
 public class User implements Serializable {
 
 	/**

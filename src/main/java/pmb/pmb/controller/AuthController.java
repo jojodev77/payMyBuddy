@@ -1,7 +1,5 @@
 package pmb.pmb.controller;
 
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,29 +43,29 @@ public class AuthController {
 
 	@Autowired
 	TokenProvider tokenProvider;
-	
 
+	/**
+	 * @Description signin controller
+	 * @param loginRequest
+	 * @return
+	 */
 	@PostMapping("/signin")
-	public ResponseEntity<?> authenticateUser( @RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = tokenProvider.createToken(authentication);
-		System.out.println("resultCont2r!!!!!!" + userService.getJwtUserResponseByEmail(jwt, loginRequest.getEmail()));
 		return ResponseEntity.ok(userService.getJwtUserResponseByEmail(jwt, loginRequest.getEmail()));
 	}
 
-//	@PostMapping("/signin")
-//	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-//		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-//		SecurityContextHolder.getContext().setAuthentication(authentication);
-//		String jwt = tokenProvider.createToken(authentication);
-//		LocalUser localUser = (LocalUser) authentication.getPrincipal();
-//		return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, GeneralUtils.buildUserInfo(localUser)));
-//	}
+	/**
+	 * @Description signup method
+	 * @param signUpRequest
+	 * @return
+	 */
 	@CrossOrigin(origins = "*")
 	@PostMapping("/signup")
-	public ResponseEntity<?> registerUser( @RequestBody SignUpRequest signUpRequest) {
+	public ResponseEntity<?> registerUser(@RequestBody SignUpRequest signUpRequest) {
 		try {
 			userService.registerNewUser(signUpRequest);
 		} catch (UserAlreadyExistAuthenticationException e) {

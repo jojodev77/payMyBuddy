@@ -50,9 +50,14 @@ public class TransactionService implements TransacService {
 	 */
 	@Transactional()
 	public String addUserBuddy(AddBuddy buddy) {
+		if (buddy == null) {
+			throw new RuntimeException("buddy informations is null");
+		}
+		String mess = "buddy add  with success";
 		List<User> listUser = userRepository.findAll();
 		if (listUser.size() < 0) {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not account situation found");
+			mess = "Error: not account situation found";
 		}
 		for (User u : listUser) {
 			UserPartnerAccount userPartnerAccount = new UserPartnerAccount();
@@ -69,6 +74,7 @@ public class TransactionService implements TransacService {
 			User ux = userRepository.findByUserReferenceTransaction(buddy.getUserSetter());
 			if (ux == null) {
 				ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("user not found");
+				mess = "Error: user not found";
 			}
 
 			for (UserPartnerAccount us : listUserParterAccount) {
@@ -78,28 +84,38 @@ public class TransactionService implements TransacService {
 
 		}
 
-		return "buddy add  with success";
+		return mess;
 	}
 
 	/**
-	 * 
+	 * @Description action for start transaction beetween buddy
 	 */
 	@Transactional
 	public String requestTransaction(UserBuddy buddy) {
-	System.out.println("@@@@@@@@@@@@@@" + buddy);
+		String mess = "transfert with success";
 		Optional<User> userG = Optional
 				.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserGetter()));
-		
+		if (!userG.isPresent()) {
+			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("no user getter found");
+			mess = "no user getter found";
+		}
+
 		Optional<User> userS = Optional
 				.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
+		if (!userS.isPresent()) {
+			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("no user setter found");
+			mess = "no user setter found";
+		}
 		if (userS.get().getUserAccountInformations().getSoldAccount() - buddy.getAmount() < 0) {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("you do not have the necessary means");
+			mess = "you do not have the necessary means";
 		} else {
-			System.out.println("######################" + userG.get().getUserAccountInformations().getSoldAccount() + "test" + buddy.getAmount());
-			userG.get().getUserAccountInformations()
-					.setSoldAccount((int) (userG.get().getUserAccountInformations().getSoldAccount() + buddy.getAmount()));
-			userS.get().getUserAccountInformations()
-					.setSoldAccount((int) (userS.get().getUserAccountInformations().getSoldAccount() - buddy.getAmount()));
+			System.out.println("######################" + userG.get().getUserAccountInformations().getSoldAccount()
+					+ "test" + buddy.getAmount());
+			userG.get().getUserAccountInformations().setSoldAccount(
+					(int) (userG.get().getUserAccountInformations().getSoldAccount() + buddy.getAmount()));
+			userS.get().getUserAccountInformations().setSoldAccount(
+					(int) (userS.get().getUserAccountInformations().getSoldAccount() - buddy.getAmount()));
 			HistoryTransaction historyTransaction = new HistoryTransaction();
 			historyTransaction.setDate(LocalDateTime.now());
 			historyTransaction.setUser_account_informations(userS.get().getUserAccountInformations());
@@ -109,9 +125,12 @@ public class TransactionService implements TransacService {
 			userRepository.save(userS.get());
 			userRepository.save(userG.get());
 		}
-		return "transfert with success";
+		return mess;
 	}
 
+	/**
+	 * @Description get list of partner buddy 
+	 */
 	@Override
 	public Set<UserPartner> listUserPartner(long id) {
 		Optional<User> user = userRepository.findById(id);
@@ -129,52 +148,70 @@ public class TransactionService implements TransacService {
 		return listUserPartner;
 	}
 
+	/***
+	 * @Description method for  add money on this account
+	 */
 	@Override
 	public String addCash(AddCash cash) {
+		String mess = "successfully add money";
+		if (cash == null) {
+			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not money deteted");
+			mess = "not money deteted";
+		}
 		Optional<User> user = Optional.ofNullable(userRepository.findByUserReferenceTransaction(cash.getUserGetter()));
 		if (!user.isPresent()) {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not account situation found");
+			mess = "not account situation found";
 		} else {
-			user.get().getUserAccountInformations().setSoldAccount((int) (user.get().getUserAccountInformations().getSoldAccount() + cash.getAmount()));
+			user.get().getUserAccountInformations().setSoldAccount(
+					(int) (user.get().getUserAccountInformations().getSoldAccount() + cash.getAmount()));
 			userRepository.save(user.get());
 		}
-		return "successfully add money";
+		return mess;
 	}
 
+	/**
+	 * @Description get list of historyTransaction
+	 */
 	@Override
 	public Set<HistoryResponse> getListHistory(UserBuddy buddy) {
+		if (buddy == null) {
+			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("buddy informations is null");
+		}
 		Set<HistoryResponse> listHistoryResponse = new HashSet<>();
-		Optional<User> user = Optional
-				.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
+		Optional<User> user = Optional.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
 		if (!user.isPresent()) {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not user found");
 		} else {
-			for(HistoryTransaction h: user.get().getUserAccountInformations().getHistoryTransaction()) {
-			HistoryResponse hr = new HistoryResponse();
-			hr.setDate(h.getDate());
-			hr.setAccountReferenceTransaction(user.get().getUserAccountInformations().getAccountReferenceTransaction());
-			hr.setSoldAccount(h.getSoldAccount());
-			listHistoryResponse.add(hr);
+			for (HistoryTransaction h : user.get().getUserAccountInformations().getHistoryTransaction()) {
+				HistoryResponse hr = new HistoryResponse();
+				hr.setDate(h.getDate());
+				hr.setAccountReferenceTransaction(
+						user.get().getUserAccountInformations().getAccountReferenceTransaction());
+				hr.setSoldAccount(h.getSoldAccount());
+				listHistoryResponse.add(hr);
 			}
 		}
-		
+
 		return listHistoryResponse;
 	}
 
+	/***
+	 *@Description get account sold situation
+	 */
 	@Override
 	public AccountSituation accountSituation(UserBuddy buddy) {
 		AccountSituation accountSituation = new AccountSituation();
-		Optional<User> user = Optional
-				.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
+		Optional<User> user = Optional.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
 		if (!user.isPresent()) {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not user found");
 		} else {
-	
+
 			accountSituation.setSoldAccount(user.get().getUserAccountInformations().getSoldAccount());
+			accountSituation.setAccountReferenceTransaction(
+					user.get().getUserAccountInformations().getAccountReferenceTransaction());
 		}
 		return accountSituation;
 	}
-	
-	
 
 }

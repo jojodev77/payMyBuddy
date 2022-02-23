@@ -14,6 +14,7 @@ import pmb.pmb.dto.SignUpRequest;
 import pmb.pmb.dto.UserReferenceTransaction;
 import pmb.pmb.exception.UserAlreadyExistAuthenticationException;
 import pmb.pmb.model.User;
+import pmb.pmb.model.UserAccountInformations;
 
 
 public interface UserService {
@@ -29,6 +30,10 @@ public interface UserService {
 	public JwtUserResponse getJwtUserResponseByEmail(String jwt, String email);
 	
 	List<UserReferenceTransaction> listReferenceTransaction();
-//	
-//	ArrayList<User> listUser();
+	
+	User getUserById(long id);
+	
+	JwtUserResponse getUserByEmail(String email);
+	
+	UserAccountInformations getUserInfo(long id);
 }

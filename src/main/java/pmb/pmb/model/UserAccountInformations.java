@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pmb.pmb.dto.UserAccountInformationResponse;
 
 @Entity
 @NoArgsConstructor
@@ -29,6 +30,30 @@ public class UserAccountInformations implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "UserAccountInformations_ID")
 	long id;
+	@OneToOne
+	User user;
+	
+	String accountReferenceTransaction;
+	
+	int numberAccount;
+	
+	int soldAccount;
+	
+	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+	private Set<UserPartnerAccount> userPartner_account;
+	
+	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+	Set<HistoryTransaction> historyTransaction;
+
+	
+	boolean state;
+	
+	public UserAccountInformationResponse toDTO() {
+		UserAccountInformationResponse userAccountInformationResponse = new UserAccountInformationResponse();
+		userAccountInformationResponse.setAccountReferenceTransaction(accountReferenceTransaction);
+		userAccountInformationResponse.setSoldAccount(soldAccount);
+		return userAccountInformationResponse;
+	}
 	
 	public long getId() {
 		return id;
@@ -94,22 +119,7 @@ public class UserAccountInformations implements Serializable {
 		this.state = state;
 	}
 
-	@OneToOne
-	User user;
 	
-	String accountReferenceTransaction;
-	
-	int numberAccount;
-	
-	int soldAccount;
-	
-	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-	private Set<UserPartnerAccount> userPartner_account;
-	
-	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-	Set<HistoryTransaction> historyTransaction;
-	
-	boolean state;
 	
 	
 }
