@@ -243,7 +243,6 @@ public class UserServiceImpl implements UserService {
 	UserAccountInformations userAccountInformations = new  UserAccountInformations();
 	userAccountInformations.setAccountReferenceTransaction(u.get().getUserAccountInformations().getAccountReferenceTransaction());
 	userAccountInformations.setSoldAccount(u.get().getUserAccountInformations().getSoldAccount());
-	System.out.println(("]]]]]]]]]]]]]]]]]]]" +userAccountInformations));
 	if (userAccountInformations != null) {
 		throw new RuntimeException("Null informations of account");
 	}

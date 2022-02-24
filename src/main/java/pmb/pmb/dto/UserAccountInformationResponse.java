@@ -9,10 +9,9 @@ import pmb.pmb.model.User;
 public class UserAccountInformationResponse {
 	long id;
 
-	
 	String accountReferenceTransaction;
-	
+
 	int numberAccount;
-	
+
 	int soldAccount;
 }
