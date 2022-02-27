@@ -19,7 +19,11 @@ import pmb.pmb.model.UserAccountInformations;
 import pmb.pmb.repo.UserRepository;
 import pmb.pmb.service.UserService;
 
-
+/**
+ * @Description method for add role and social provider in user 
+ * @author j.de-la-osa
+ *
+ */
 public class GeneralUtils {
 	
 	@Autowired

@@ -60,16 +60,25 @@ public class AuthControllerTest {
 	 * @Description test call http siginin with succes
 	 */
 	@Test
-	public void signinControllerSuccesTest() throws JsonProcessingException, Exception {
+	public void signinControllerSuccesTest() {
 		// GIVEN
+		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json", java.nio.charset.Charset.forName("UTF-8"));
 		LoginRequest loginRequest = new LoginRequest();
 		loginRequest.setEmail("admin@jojo");
 		loginRequest.setPassword("admin@");
 		ObjectMapper objectMapper = new ObjectMapper();
 		// WHEN
 		// THEN
-		mockMvc.perform(post("/api/auth/signin").accept(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(loginRequest))).andDo(print()).andExpect(status().isOk());
+		try {
+			mockMvc.perform(post("/api/auth/signin").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(loginRequest))).andDo(print()).andExpect(status().isOk());
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -80,13 +89,12 @@ public class AuthControllerTest {
 	@Test
 	public void signinControllerErrorTest() throws JsonProcessingException, Exception {
 		// GIVEN
-		LoginRequest loginRequest = new LoginRequest();
-		loginRequest.setEmail(null);
-		loginRequest.setPassword(null);
+		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json", java.nio.charset.Charset.forName("UTF-8"));
+		LoginRequest loginRequest = null;
 		ObjectMapper objectMapper = new ObjectMapper();
 		// WHEN
 		// THEN
-		mockMvc.perform(post("/api/auth/signin").accept(MediaType.APPLICATION_JSON)
+		mockMvc.perform(post("/api/auth/signin").accept(MediaType.APPLICATION_JSON).contentType(MEDIA_TYPE_JSON_UTF8)
 				.content(objectMapper.writeValueAsString(loginRequest))).andDo(print()).andExpect(status().isBadRequest());
 	}
 	
@@ -97,14 +105,23 @@ public class AuthControllerTest {
 	 * @Description test call http signup with succes
 	 */
 	@Test
-	public void signupControllerSuccesTest() throws JsonProcessingException, Exception {
+	public void signupControllerSuccesTest(){
 		// GIVEN
+		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json", java.nio.charset.Charset.forName("UTF-8"));
 		SignUpRequest signUpRequest = new SignUpRequest(null, "admintest", "admintest@test", "adminadmin", null);
 		ObjectMapper objectMapper = new ObjectMapper();
 		// WHEN
 		// THEN
-		mockMvc.perform(post("/api/auth/signin").accept(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(signUpRequest))).andDo(print()).andExpect(status().isOk());
+		try {
+			mockMvc.perform(post("/api/auth/signin").accept(MediaType.APPLICATION_JSON).contentType(MEDIA_TYPE_JSON_UTF8)
+					.content(objectMapper.writeValueAsString(signUpRequest))).andDo(print()).andExpect(status().isOk());
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -114,14 +131,23 @@ public class AuthControllerTest {
 	 * @Description test call http signup with succes
 	 */
 	@Test
-	public void signupControllerSuccesError() throws JsonProcessingException, Exception {
+	public void signupControllerSuccesError() {
 		// GIVEN
+		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json", java.nio.charset.Charset.forName("UTF-8"));
 		LoginRequest loginRequest = new LoginRequest();
 		ObjectMapper objectMapper = new ObjectMapper();
 		// WHEN
 		// THEN
-		mockMvc.perform(post("/api/auth/signin").accept(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(loginRequest))).andDo(print()).andExpect(status().isBadRequest());
+		try {
+			mockMvc.perform(post("/api/auth/signin").accept(MediaType.APPLICATION_JSON).contentType(MEDIA_TYPE_JSON_UTF8)
+					.content(objectMapper.writeValueAsString(loginRequest))).andDo(print()).andExpect(status().isBadRequest());
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	

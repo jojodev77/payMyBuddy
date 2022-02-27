@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
@@ -44,14 +45,23 @@ public class UserControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void getCurrentUser() throws Exception {
+	public void getCurrentUser()  {
 		//GIVEN
+		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json", java.nio.charset.Charset.forName("UTF-8"));
 			LocalUser localUser = new LocalUser(null, null, false, false, false, false, null, null, null, null);
 			User.withUsername("Admin");
 			ObjectMapper objectMapper = new ObjectMapper();
 		//WHEN
 		//THEN
-		mockMvc.perform(post("/api/user/me").accept(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(localUser))).andDo(print()).andExpect(status().isOk());
+		try {
+			mockMvc.perform(post("/api/user/me").accept(MediaType.APPLICATION_JSON).contentType(MEDIA_TYPE_JSON_UTF8).content(objectMapper.writeValueAsString(localUser))).andDo(print()).andExpect(status().isOk());
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -61,8 +71,9 @@ public class UserControllerTest {
 	@Test
 	public void getListUserReferenceTransaction() throws Exception {
 		//GIVEN
+		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json", java.nio.charset.Charset.forName("UTF-8"));
 		//WHEN
 		//THEN
-		mockMvc.perform(post("/api/user/listUserReferenceTransaction").accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk());
+		mockMvc.perform(post("/api/user/listUserReferenceTransaction").accept(MediaType.APPLICATION_JSON).contentType(MEDIA_TYPE_JSON_UTF8)).andDo(print()).andExpect(status().isOk());
 	}
 }
