@@ -11,6 +11,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -31,6 +33,7 @@ public class UserAccountInformations implements Serializable {
 	@Column(name = "UserAccountInformations_ID")
 	long id;
 	@OneToOne
+	public
 	User user;
 	
 	String accountReferenceTransaction;
@@ -39,10 +42,12 @@ public class UserAccountInformations implements Serializable {
 	
 	int soldAccount;
 	
-	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-	private Set<UserPartnerAccount> userPartner_account;
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name = "userPartner_account_userAccountInformations", joinColumns = { @JoinColumn(name = "user_account_informations_id") }, inverseJoinColumns = { @JoinColumn(name = "userPartner_account_id") })
+	 Set<UserPartnerAccount> userPartner_account;
 	
-	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name = "historyTransaction_userAccountInformations", joinColumns = { @JoinColumn(name = "user_account_informations_id") }, inverseJoinColumns = { @JoinColumn(name = "history_transaction_id") })
 	Set<HistoryTransaction> historyTransaction;
 
 	

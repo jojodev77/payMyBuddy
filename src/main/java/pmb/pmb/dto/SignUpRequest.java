@@ -6,10 +6,7 @@ import pmb.pmb.validator.PasswordMatches;
 
 import lombok.Data;
 
-/**
- * @author Chinna
- * @since 26/3/18
- */
+
 @Data
 
 public class SignUpRequest {

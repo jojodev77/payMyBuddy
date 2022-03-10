@@ -17,38 +17,50 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "userPartnerAccount")
+@Table(name = "user_partner_account")
 public class UserPartnerAccount implements Serializable {
-	public long getId() {
-		return id;
-	}
-	public void setId(long id) {
-		this.id = id;
-	}
-	public UserAccountInformations getUserAccountInformations() {
-		return userAccountInformations;
-	}
-	public void setUserAccountInformations(UserAccountInformations userAccountInformations) {
-		this.userAccountInformations = userAccountInformations;
-	}
-	public String getUserRefTransaction() {
-		return userRefTransaction;
-	}
-	public void setUserRefTransaction(String userRefTransaction) {
-		this.userRefTransaction = userRefTransaction;
-	}
-	public String getDisplayName() {
-		return displayName;
-	}
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	long id;
-	
+
 	@ManyToOne
-	UserAccountInformations userAccountInformations;
+	UserAccountInformations user_account_informations;
+	
 	String userRefTransaction;
+	
 	String displayName;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public UserAccountInformations getUserAccountInformations() {
+		return user_account_informations;
+	}
+
+	public void setUserAccountInformations(UserAccountInformations user_account_informations) {
+		this.user_account_informations = user_account_informations;
+	}
+
+	public String getUserRefTransaction() {
+		return userRefTransaction;
+	}
+
+	public void setUserRefTransaction(String userRefTransaction) {
+		this.userRefTransaction = userRefTransaction;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
 }

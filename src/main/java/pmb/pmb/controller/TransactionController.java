@@ -32,6 +32,12 @@ public class TransactionController {
 		return transactionService.addUserBuddy(buddy);
 	}
 	
+	@PostMapping("/user/deleteBuddy")
+	//@PreAuthorize("hasRole('USER')")
+	public String deleteBuddyForTransaction( @RequestBody UserBuddy buddy ) {
+		return transactionService.deleteBuddy(buddy);
+	}
+	
 	@PostMapping("/user/history")
 //	@PreAuthorize("hasRole('USER')")
 	public Set<HistoryResponse> getHistory( @RequestBody UserBuddy userGetter ) {

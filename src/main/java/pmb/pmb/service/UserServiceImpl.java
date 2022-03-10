@@ -80,6 +80,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private User buildUser(final SignUpRequest formDTO) {
+		if (formDTO == null) {
+			throw new RuntimeException("this informations for signup is null");
+		}
 		User user = new User();
 		user.setDisplayName(formDTO.getDisplayName());
 		user.setEmail(formDTO.getEmail());
@@ -112,7 +115,6 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public LocalUser processUserRegistration(String registrationId, Map<String, Object> attributes, OidcIdToken idToken,
 			OidcUserInfo userInfo) {
-		System.out.println("````````````````````" + userInfo);
 //		if (registrationId == null || userInfo == null) {
 //			throw new RuntimeException("Error: informations from social login is not found");
 //		}

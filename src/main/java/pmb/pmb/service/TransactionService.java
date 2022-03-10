@@ -46,45 +46,35 @@ public class TransactionService implements TransacService {
 	UserAccountInfomationsRepository userAccountInfomationsRepository;
 
 	/**
+	 * 
 	 * @Description add a buddy for transaction
 	 */
 	@Transactional()
 	public String addUserBuddy(AddBuddy buddy) {
-		if (buddy == null) {
+		if (buddy.getUserGetter() == null) {
 			throw new RuntimeException("buddy informations is null");
 		}
 		String mess = "buddy add  with success";
 		List<User> listUser = userRepository.findAll();
-		if (listUser.size() < 0) {
-			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not account situation found");
-			mess = "Error: not account situation found";
+		User us = userRepository.findByUserReferenceTransaction(buddy.getUserSetter());
+		User ug = userRepository.findByUserReferenceTransaction(buddy.getUserGetter());
+		if (us == null) {
+			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("user not found");
+			throw new RuntimeException("user setter not found");
 		}
-		for (User u : listUser) {
-			UserPartnerAccount userPartnerAccount = new UserPartnerAccount();
-			Set<UserPartnerAccount> listUserParterAccount = new HashSet<UserPartnerAccount>();
-			if (u.getUserAccountInformations().getAccountReferenceTransaction().contains(buddy.getUserGetter())) {
-
-				userPartnerAccount.setDisplayName(u.getDisplayName());
-				userPartnerAccount
-						.setUserRefTransaction(u.getUserAccountInformations().getAccountReferenceTransaction());
-				userPartnerAccount.setUserAccountInformations(u.getUserAccountInformations());
-				listUserParterAccount.add(userPartnerAccount);
-
-			}
-			User ux = userRepository.findByUserReferenceTransaction(buddy.getUserSetter());
-			if (ux == null) {
-				ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("user not found");
-				mess = "Error: user not found";
-			}
-
-			for (UserPartnerAccount us : listUserParterAccount) {
-				ux.getUserAccountInformations().getUserPartner_account().add(us);
-			}
-			userRepository.save(ux);
-
+		if (ug == null) {
+			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("user not found");
+			throw new RuntimeException("user getter not found");
 		}
-
+		UserPartnerAccount userPartner = new UserPartnerAccount();
+		userPartner.setDisplayName(ug.getDisplayName());
+		userPartner.setUserRefTransaction(ug.getUserAccountInformations().getAccountReferenceTransaction());
+		userPartner.setUserAccountInformations(ug.getUserAccountInformations());
+		us.getUserAccountInformations().getUserPartner_account().add(userPartner);
+		userRepository.save(us);
+		
 		return mess;
+
 	}
 
 	/**
@@ -92,6 +82,9 @@ public class TransactionService implements TransacService {
 	 */
 	@Transactional
 	public String requestTransaction(UserBuddy buddy) {
+		if (buddy.getUserGetter() == null) {
+			throw new RuntimeException("buddy informations is null");
+		}
 		String mess = "transfert with success";
 		Optional<User> userG = Optional
 				.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserGetter()));
@@ -106,20 +99,25 @@ public class TransactionService implements TransacService {
 		if (!userS.isPresent()) {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("no user setter found");
 			mess = "no user setter found";
+			throw new RuntimeException("no user setter found");
 		}
 		if (userS.get().getUserAccountInformations().getSoldAccount() - buddy.getAmount() < 0) {
-			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("you do not have the necessary means");
-			mess = "you do not have the necessary means";
+			throw new RuntimeException("you do not have the necessary means");
 		} else {
 			userG.get().getUserAccountInformations().setSoldAccount(
 					(int) (userG.get().getUserAccountInformations().getSoldAccount() + buddy.getAmount()));
 			userS.get().getUserAccountInformations().setSoldAccount(
 					(int) (userS.get().getUserAccountInformations().getSoldAccount() - buddy.getAmount()));
 			HistoryTransaction historyTransaction = new HistoryTransaction();
+			Set<HistoryTransaction> lht = new HashSet<>();
+			historyTransaction.setDisplayName(userG.get().getDisplayName());
+			historyTransaction.setSoldAccount(userS.get().getUserAccountInformations().getSoldAccount());
 			historyTransaction.setDate(LocalDateTime.now());
 			historyTransaction.setUser_account_informations(userS.get().getUserAccountInformations());
 			historyTransaction.setAccount_reference_transaction(
-					userS.get().getUserAccountInformations().getAccountReferenceTransaction());
+			userS.get().getUserAccountInformations().getAccountReferenceTransaction());
+			lht.add(historyTransaction);
+			userS.get().getUserAccountInformations().setHistoryTransaction(lht);
 			userS.get().getUserAccountInformations().getHistoryTransaction().add(historyTransaction);
 			userRepository.save(userS.get());
 			userRepository.save(userG.get());
@@ -135,9 +133,11 @@ public class TransactionService implements TransacService {
 		Optional<User> user = userRepository.findById(id);
 		if (!user.isPresent()) {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not list user found");
+			throw new RuntimeException("not list user found");
 		}
 		UserPartner userPartner = new UserPartner();
 		Set<UserPartner> listUserPartner = new HashSet<UserPartner>();
+		System.out.println("@@@@@@@@@#" + user.get().getUserAccountInformations().getUserPartner_account());
 		for (UserPartnerAccount u : user.get().getUserAccountInformations().getUserPartner_account()) {
 			userPartner.setDisplayName(u.getDisplayName());
 			userPartner.setUserRefTransaction(u.getUserAccountInformations().getAccountReferenceTransaction());
@@ -153,10 +153,6 @@ public class TransactionService implements TransacService {
 	@Override
 	public String addCash(AddCash cash) {
 		String mess = "successfully add money";
-		if (cash == null) {
-			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not money deteted");
-			throw new RuntimeException("not money deteted");
-		}
 		Optional<User> user = Optional.ofNullable(userRepository.findByUserReferenceTransaction(cash.getUserGetter()));
 		if (!user.isPresent()) {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not account situation found");
@@ -178,20 +174,27 @@ public class TransactionService implements TransacService {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("buddy informations is null");
 			throw new RuntimeException("buddy informations is null");
 		}
-		Set<HistoryResponse> listHistoryResponse = new HashSet<>();
-		Optional<User> user = Optional.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
-		if (!user.isPresent()) {
+
+		Optional<User> u = Optional.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
+		if (!u.isPresent()) {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not user found");
 			throw new RuntimeException("not user found");
-		} else {
-			for (HistoryTransaction h : user.get().getUserAccountInformations().getHistoryTransaction()) {
+		} 
+		if (u.get().getUserAccountInformations().getHistoryTransaction().size() < 0) {
+			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not user found");
+			throw new RuntimeException("not history list");
+		} 
+		Set<HistoryResponse> listHistoryResponse = new HashSet<>();
+			for (HistoryTransaction h : u.get().getUserAccountInformations().getHistoryTransaction()) {
 				HistoryResponse hr = new HistoryResponse();
+				hr.setDisplayName(h.getDisplayName());
 				hr.setDate(h.getDate());
+				hr.setSoldAccount(h.getSoldAccount());
 				hr.setAccountReferenceTransaction(
-						user.get().getUserAccountInformations().getAccountReferenceTransaction());
+						u.get().getUserAccountInformations().getAccountReferenceTransaction());
 				hr.setSoldAccount(h.getSoldAccount());
 				listHistoryResponse.add(hr);
-			}
+			
 		}
 
 		return listHistoryResponse;
@@ -205,14 +208,39 @@ public class TransactionService implements TransacService {
 		AccountSituation accountSituation = new AccountSituation();
 		Optional<User> user = Optional.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
 		if (!user.isPresent()) {
-			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not user found");
+			throw new RuntimeException("not user found");
 		} else {
 
 			accountSituation.setSoldAccount(user.get().getUserAccountInformations().getSoldAccount());
 			accountSituation.setAccountReferenceTransaction(
-					user.get().getUserAccountInformations().getAccountReferenceTransaction());
+			user.get().getUserAccountInformations().getAccountReferenceTransaction());
 		}
 		return accountSituation;
+	}
+
+	/**
+	 * @Description method for delete a buddy
+	 */
+	@Override
+	public String deleteBuddy(UserBuddy buddy) {
+		Optional<User> ug = Optional.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserGetter()));
+		Optional<User> us = Optional.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserGetter()));
+		if (ug.isPresent()) {
+			if (us.isPresent()) {
+
+				for (UserPartnerAccount up : us.get().getUserAccountInformations().getUserPartner_account()) {
+					if (up.getUserRefTransaction() == buddy.getUserGetter()) {
+						us.get().getUserAccountInformations().getUserPartner_account().remove(up);
+						userRepository.save(us.get());
+					}
+				}
+				throw new RuntimeException("error with this delete");
+
+			} else {
+				throw new RuntimeException("not user found");
+			}
+		}
+		return "buddy " + buddy.getUserGetter() + "delete";
 	}
 
 }

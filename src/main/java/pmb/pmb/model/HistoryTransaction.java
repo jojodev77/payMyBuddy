@@ -31,5 +31,7 @@ public class HistoryTransaction {
 
 	String account_reference_transaction;
 	
+	String displayName;
+	
 	int soldAccount;
 }

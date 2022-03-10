@@ -114,11 +114,20 @@
 				<version>0.8.7</version>
 				<configuration>
 					<excludes>
-						<exclude>META-INF/**</exclude>
-						<exclude>**/*dto*/**</exclude>
-						<exclude>**/*entity*/**</exclude>
-						<exclude>**/*p5SafetyNet.p5SafetyNet*/**</exclude>
-						<exclude>**/*p5SafetyNet.P5SafetyNetApplication.class*/**</exclude>
+						<exclude>**/*pmb.pmb/dto*/**</exclude>
+						<exclude>**/*model.*</exclude>
+						<exclude>**/*pmb.pmb/repo*/**</exclude>
+						<exclude>**/*pmb.pmb/exception/**</exclude>
+						<exclude>**/pmb/pmb/validator/*</exclude>
+						<exclude>**/*pmb.pmb/exception/handler*/**</exclude>
+						<exclude>**/*config*/**</exclude>
+						<exclude>**/*pmb.pmb/security/jwt*/**</exclude>
+						<exclude>**/*pmb.pmb.util*/**</exclude>
+						<exclude>**/*pmb/pmb/handler*/**</exclude>
+						<exclude>**/*pmb/pmb/security/oauth2*/**</exclude>
+						<exclude>**/*pmb/pmb.security/oauth2/user*/**</exclude>
+						<exclude>**/*pmb/pmb*/**</exclude>
+						<exclude>**/*pmb/pmb/class*/**</exclude>
 						<exclude>**/Lambda**</exclude>
 					</excludes>
 				</configuration>
@@ -206,9 +215,16 @@
 					<excludes>
 						<exclude>META-INF/**</exclude>
 						<exclude>**/*dto*/**</exclude>
-						<exclude>**/*entity*/**</exclude>
-						<exclude>**/*pmb.pmb*/**</exclude>
-						<exclude>**/*pmb.class*/**</exclude>
+						<exclude>**/*model*/**</exclude>
+						<exclude>**/*util*/**</exclude>
+						<exclude>**/*handler*/**</exclude>
+						<exclude>**/*validator*/**</exclude>
+						<exclude>**/*exception*/**</exclude>
+						<exclude>**/*exception/handler*/**</exclude>
+						<exclude>**/*config*/**</exclude>
+						<exclude>**/*security/jwt*/**</exclude>
+						<exclude>**/*security/oauth2*/**</exclude>
+						<exclude>**/*security/oauth2/user*/**</exclude>
 						<exclude>**/Lambda**</exclude>
 					</excludes>
 				</configuration>

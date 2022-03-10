@@ -70,10 +70,6 @@ public class UserController {
 	return ResponseEntity.ok(GeneralUtils.buildUserInfo(user));
 	}
 
-	@GetMapping("/all")
-	public ResponseEntity<?> getContent() {
-		return ResponseEntity.ok("Public content goes here");
-	}
 
 	
 	@GetMapping("/user")

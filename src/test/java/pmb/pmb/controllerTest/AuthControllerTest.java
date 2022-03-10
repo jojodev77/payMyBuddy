@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -41,6 +42,7 @@ import org.springframework.security.core.userdetails.User;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthControllerTest {
+	
 	private MockMvc mockMvc;
 
 	@InjectMocks
@@ -48,6 +50,9 @@ public class AuthControllerTest {
 
 	@Autowired
 	AuthenticationManager authenticationManager;
+	
+	@Mock
+	private View mockView;
 
 	@BeforeEach
 	private void setUpPerTest() {
@@ -60,7 +65,7 @@ public class AuthControllerTest {
 	 * @Description test call http siginin with succes
 	 */
 	@Test
-	public void signinControllerSuccesTest() {
+	public void signinControllerSuccesTest(){
 		// GIVEN
 		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json", java.nio.charset.Charset.forName("UTF-8"));
 		LoginRequest loginRequest = new LoginRequest();
@@ -72,9 +77,6 @@ public class AuthControllerTest {
 		try {
 			mockMvc.perform(post("/api/auth/signin").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(loginRequest))).andDo(print()).andExpect(status().isOk());
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -87,15 +89,20 @@ public class AuthControllerTest {
 	 * @Description test call http siginin with error
 	 */
 	@Test
-	public void signinControllerErrorTest() throws JsonProcessingException, Exception {
+	public void signinControllerErrorTest()  {
 		// GIVEN
 		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json", java.nio.charset.Charset.forName("UTF-8"));
 		LoginRequest loginRequest = null;
 		ObjectMapper objectMapper = new ObjectMapper();
 		// WHEN
 		// THEN
-		mockMvc.perform(post("/api/auth/signin").accept(MediaType.APPLICATION_JSON).contentType(MEDIA_TYPE_JSON_UTF8)
-				.content(objectMapper.writeValueAsString(loginRequest))).andDo(print()).andExpect(status().isBadRequest());
+		try {
+			mockMvc.perform(post("/api/auth/signin").accept(MediaType.APPLICATION_JSON).contentType(MEDIA_TYPE_JSON_UTF8)
+					.content(objectMapper.writeValueAsString(loginRequest))).andDo(print()).andExpect(status().isBadRequest());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -105,7 +112,7 @@ public class AuthControllerTest {
 	 * @Description test call http signup with succes
 	 */
 	@Test
-	public void signupControllerSuccesTest(){
+	public void signupControllerSuccesTest() {
 		// GIVEN
 		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json", java.nio.charset.Charset.forName("UTF-8"));
 		SignUpRequest signUpRequest = new SignUpRequest(null, "admintest", "admintest@test", "adminadmin", null);
@@ -115,9 +122,6 @@ public class AuthControllerTest {
 		try {
 			mockMvc.perform(post("/api/auth/signin").accept(MediaType.APPLICATION_JSON).contentType(MEDIA_TYPE_JSON_UTF8)
 					.content(objectMapper.writeValueAsString(signUpRequest))).andDo(print()).andExpect(status().isOk());
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -135,15 +139,13 @@ public class AuthControllerTest {
 		// GIVEN
 		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json", java.nio.charset.Charset.forName("UTF-8"));
 		LoginRequest loginRequest = new LoginRequest();
+		loginRequest.setEmail("tt@ffff.cm");
+		loginRequest.setPassword("hhh");
 		ObjectMapper objectMapper = new ObjectMapper();
 		// WHEN
 		// THEN
 		try {
-			mockMvc.perform(post("/api/auth/signin").accept(MediaType.APPLICATION_JSON).contentType(MEDIA_TYPE_JSON_UTF8)
-					.content(objectMapper.writeValueAsString(loginRequest))).andDo(print()).andExpect(status().isBadRequest());
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			mockMvc.perform(post("/api/auth/signup").contentType(MEDIA_TYPE_JSON_UTF8).accept(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(loginRequest))).andDo(print()).andExpect(status().isBadRequest());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
