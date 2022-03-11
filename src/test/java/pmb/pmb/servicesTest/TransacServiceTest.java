@@ -79,22 +79,35 @@ public class TransacServiceTest {
 	@Test
 	public void addUserBuddySuccesTest() {
 //		//GIVEN
-		User user = new User();
-		ab.setUserGetter("pmbt@tttotb");
-		ab.setUserSetter("pmbaminminb");
-		String message = "";
-		user.setDisplayName("jojo");
-		user.setEmail("o@h.com");
-		user.setPassword("testjQ");
-		listUser.add(user);
+		AddBuddy bud = new AddBuddy();
+		UserAccountInformations userAccountInformation = new UserAccountInformations();
+		userAccountInformation.setAccountReferenceTransaction("pmbt@tttotb");
+		userAccountInformation.setSoldAccount(100);
+		bud.setUserGetter("pmbaminminb");
+		bud.setUserSetter("pmbt@tttotb");
+		user.setId((long) 1);
+		user.setDisplayName("totototo");
+		user.setEmail("tt@tt.fr");
+		user.setPassword("tototo");
+		user.setUserAccountInformations(userAccountInformation);
+		UserAccountInformations userAccountInformation1 = new UserAccountInformations();
+		userAccountInformation1.setAccountReferenceTransaction("pmbt@tttotb");
+		userAccountInformation1.setSoldAccount(100);
+		User user1 = new User();
+		user1.setId((long) 1);
+		user1.setDisplayName("totototo");
+		user1.setEmail("pmbaminminb");
+		user1.setPassword("tototo");
+		user1.setUserAccountInformations(userAccountInformation1);
 		listUser.add(user1);
+		listUser.add(user);
 //		//WHEN
 		lenient().when(userRepository.findAll()).thenReturn(listUser);
 		lenient().when(userRepository.findByUserReferenceTransaction(anyString())).thenReturn(user);
 		lenient().when(userRepository.findByUserReferenceTransaction(anyString())).thenReturn(user1);
 //		//THEN
-		transactionService.addUserBuddy(ab);
-		verify(transactionService).addUserBuddy(ab);
+		transactionService.addUserBuddy(bud);
+		verify(transactionService).addUserBuddy(bud);
 	
 	}
 	
@@ -505,5 +518,57 @@ public class TransacServiceTest {
 		});
 		// THEN
 		assertEquals(null, exception.getMessage());
+	}
+	
+	
+	/**
+	 * @Description test method for get account situation with success
+	 */
+	@Test
+	public void accountSituationWithSuccess() {
+		//GIVEN
+		UserAccountInformations userAccountInformation = new UserAccountInformations();
+		userAccountInformation.setAccountReferenceTransaction("pmbt@tttotb");
+		userAccountInformation.setSoldAccount(100);
+		buddy.setUserGetter("pmbaminminb");
+		buddy.setUserSetter("pmbt@tttotb");
+		buddy.setAmount(10);
+		user.setId((long) 1);
+		user.setDisplayName("totototo");
+		user.setEmail("tt@tt.fr");
+		user.setPassword("tototo");
+		user.setUserAccountInformations(userAccountInformation);
+		//WHEN
+		lenient().when(userRepository.findByUserReferenceTransaction(anyString())).thenReturn(user);
+		//THEN
+		transactionService.accountSituation(buddy);
+		verify(transactionService).accountSituation(buddy);
+	}
+	
+	/**
+	 * @Description test method for get account situation with error
+	 */
+	@Test
+	public void accountSituationWithErrorWhenUserIsNotFound() {
+		//GIVEN
+		UserAccountInformations userAccountInformation = new UserAccountInformations();
+		userAccountInformation.setAccountReferenceTransaction("pmbt@tttotb");
+		userAccountInformation.setSoldAccount(100);
+		buddy.setUserGetter("pmbaminminb");
+		buddy.setUserSetter("pmbt@tttotb");
+		buddy.setAmount(10);
+		user.setId((long) 1);
+		user.setDisplayName("totototo");
+		user.setEmail("tt@tt.fr");
+		user.setPassword("tototo");
+		user.setUserAccountInformations(userAccountInformation);
+		//WHEN
+		lenient().when(userRepository.findByUserReferenceTransaction(anyString())).thenReturn(null);
+		//THEN
+		RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+			transactionService.accountSituation(buddy);
+		});
+		// THEN
+		assertEquals("not user found", exception.getMessage());
 	}
 }

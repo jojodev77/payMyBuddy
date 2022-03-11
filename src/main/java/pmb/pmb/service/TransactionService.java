@@ -51,6 +51,7 @@ public class TransactionService implements TransacService {
 	 */
 	@Transactional()
 	public String addUserBuddy(AddBuddy buddy) {
+		UserPartnerAccount userPartner = new UserPartnerAccount();
 		if (buddy.getUserGetter() == null) {
 			throw new RuntimeException("buddy informations is null");
 		}
@@ -66,10 +67,12 @@ public class TransactionService implements TransacService {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("user not found");
 			throw new RuntimeException("user getter not found");
 		}
-		UserPartnerAccount userPartner = new UserPartnerAccount();
 		userPartner.setDisplayName(ug.getDisplayName());
 		userPartner.setUserRefTransaction(ug.getUserAccountInformations().getAccountReferenceTransaction());
 		userPartner.setUserAccountInformations(ug.getUserAccountInformations());
+		Set<UserPartnerAccount> lup = new HashSet<>();
+		lup.add(userPartner);
+		us.getUserAccountInformations().setUserPartner_account(lup);
 		us.getUserAccountInformations().getUserPartner_account().add(userPartner);
 		userRepository.save(us);
 		
