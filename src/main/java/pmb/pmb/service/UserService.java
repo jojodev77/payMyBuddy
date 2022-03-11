@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 
+import pmb.pmb.config.ExcludeFromJacocoGeneratedReport;
 import pmb.pmb.dto.JwtUserResponse;
 import pmb.pmb.dto.LocalUser;
 import pmb.pmb.dto.SignUpRequest;
@@ -34,6 +35,6 @@ public interface UserService {
 	User getUserById(long id);
 	
 	JwtUserResponse getUserByEmail(String email);
-	
+	@ExcludeFromJacocoGeneratedReport
 	UserAccountInformations getUserInfo(long id);
 }

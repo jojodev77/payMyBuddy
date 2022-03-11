@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import pmb.pmb.config.ExcludeFromJacocoGeneratedReport;
 import pmb.pmb.dto.LocalUser;
 import pmb.pmb.exception.ResourceNotFoundException;
 import pmb.pmb.model.User;
@@ -29,6 +30,7 @@ public class LocalUserDetailService implements UserDetailsService {
 	}
 
 	@Transactional
+	@ExcludeFromJacocoGeneratedReport
 	public LocalUser loadUserById(Long id) {
 		User user = userService.findUserById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 		return createLocalUser(user);
@@ -38,6 +40,7 @@ public class LocalUserDetailService implements UserDetailsService {
 	 * @param user
 	 * @return
 	 */
+	@ExcludeFromJacocoGeneratedReport
 	private LocalUser createLocalUser(User user) {
 		return new LocalUser(user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true, GeneralUtils.buildSimpleGrantedAuthorities(user.getRoles()), user);
 	}

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import pmb.pmb.config.ExcludeFromJacocoGeneratedReport;
 import pmb.pmb.dto.ApiResponse;
 import pmb.pmb.dto.JwtAuthenticationResponse;
 import pmb.pmb.dto.JwtUserResponse;
@@ -65,6 +66,7 @@ public class AuthController {
 	 */
 	@CrossOrigin(origins = "*")
 	@PostMapping("/signup")
+	@ExcludeFromJacocoGeneratedReport
 	public ResponseEntity<?> registerUser(@RequestBody SignUpRequest signUpRequest) {
 		try {
 			userService.registerNewUser(signUpRequest);

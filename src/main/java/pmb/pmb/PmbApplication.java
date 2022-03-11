@@ -13,6 +13,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import pmb.pmb.config.ExcludeFromJacocoGeneratedReport;
+
 
 
 
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 public class PmbApplication extends SpringBootServletInitializer {
 
+	@ExcludeFromJacocoGeneratedReport
 	public static void main(String[] args) {
 		SpringApplicationBuilder app = new SpringApplicationBuilder(PmbApplication.class);
 		app.run();

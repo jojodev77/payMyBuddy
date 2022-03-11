@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+
+import pmb.pmb.config.ExcludeFromJacocoGeneratedReport;
 import pmb.pmb.dto.JwtUserResponse;
 import pmb.pmb.dto.LocalUser;
 import pmb.pmb.dto.SignUpRequest;
@@ -79,6 +81,7 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
+	@ExcludeFromJacocoGeneratedReport
 	private User buildUser(final SignUpRequest formDTO) {
 		if (formDTO == null) {
 			throw new RuntimeException("this informations for signup is null");
@@ -100,6 +103,7 @@ public class UserServiceImpl implements UserService {
 	 * @Description method for get user with email
 	 */
 	@Override
+	@ExcludeFromJacocoGeneratedReport
 	public User findUserByEmail( String email) {
 		System.out.println("........................email" + email);
 		if (email == null) {
@@ -113,6 +117,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	@Transactional
+	@ExcludeFromJacocoGeneratedReport
 	public LocalUser processUserRegistration(String registrationId, Map<String, Object> attributes, OidcIdToken idToken,
 			OidcUserInfo userInfo) {
 //		if (registrationId == null || userInfo == null) {
@@ -147,6 +152,7 @@ public class UserServiceImpl implements UserService {
 	 * @param oAuth2UserInfo
 	 * @return
 	 */
+	@ExcludeFromJacocoGeneratedReport
 	private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
 		if (existingUser == null || oAuth2UserInfo == null) {
 			throw new RuntimeException("informatios from update user is not found");
@@ -154,7 +160,8 @@ public class UserServiceImpl implements UserService {
 		existingUser.setDisplayName(oAuth2UserInfo.getName());
 		return userRepository.save(existingUser);
 	}
-
+	
+	@ExcludeFromJacocoGeneratedReport
 	private SignUpRequest toUserRegistrationObject(String registrationId, OAuth2UserInfo oAuth2UserInfo) {
 		return SignUpRequest.getBuilder().addProviderUserID(oAuth2UserInfo.getId())
 				.addDisplayName(oAuth2UserInfo.getName()).addEmail(oAuth2UserInfo.getEmail())
@@ -233,6 +240,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@ExcludeFromJacocoGeneratedReport
 	public JwtUserResponse getUserByEmail(String email) {
 	Optional<User> u = Optional.ofNullable(userRepository.findByEmail(email));
 	JwtUserResponse jwtUserResponse = new JwtUserResponse(null, u.get().getId(),u.get().getEmail(), u.get().getDisplayName(), null, u.get().getUserAccountInformations());
@@ -240,6 +248,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@ExcludeFromJacocoGeneratedReport
 	public UserAccountInformations getUserInfo(long id) {
 	Optional<User> u = userRepository.findById(id);
 	UserAccountInformations userAccountInformations = new  UserAccountInformations();
@@ -250,5 +259,13 @@ public class UserServiceImpl implements UserService {
 	}
 		return userAccountInformations;
 	}
+	
+	@ExcludeFromJacocoGeneratedReport
+	  private static boolean matches(final String annotation) {
+		    final String name = annotation
+		            .substring(Math.max(annotation.lastIndexOf('/'),
+		                    annotation.lastIndexOf('$')) + 1);
+		    return name.contains("Generated");
+		  }
 
 }
