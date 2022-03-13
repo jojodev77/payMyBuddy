@@ -1,5 +1,6 @@
 package pmb.pmb.controller;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class TransactionController {
 	
 	@PostMapping("/user/history")
 //	@PreAuthorize("hasRole('USER')")
-	public Set<HistoryResponse> getHistory( @RequestBody UserBuddy userGetter ) {
+	public List<HistoryResponse> getHistory( @RequestBody UserBuddy userGetter ) {
 		return transactionService.getListHistory(userGetter);
 	}
 	

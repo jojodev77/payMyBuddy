@@ -182,7 +182,7 @@ public class TransacServiceTest {
 		user.setPassword("testjQ");
 		UserAccountInformations uai = new UserAccountInformations();
 		HistoryTransaction ht = new HistoryTransaction();
-		Set<HistoryTransaction> lht = new HashSet<>();
+		List<HistoryTransaction> lht = new ArrayList<>();
 		ht.setDisplayName("hhh");
 		ht.setSoldAccount(1233);
 		lht.add(ht);
@@ -421,7 +421,7 @@ public class TransacServiceTest {
 		user.setEmail("tt@tt.fr");
 		user.setPassword("tototo");
 		user.setUserAccountInformations(userAccountInformation);
-		Set<HistoryTransaction> lht = new HashSet<>();
+		List<HistoryTransaction> lht = new ArrayList<>();
 		HistoryTransaction ht = new HistoryTransaction();
 		HistoryTransaction ht1 = new HistoryTransaction();
 		ht.setAccount_reference_transaction("pmbaminminb");

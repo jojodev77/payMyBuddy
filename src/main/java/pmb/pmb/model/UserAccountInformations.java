@@ -46,9 +46,9 @@ public class UserAccountInformations implements Serializable {
 	@JoinTable(name = "userPartner_account_userAccountInformations", joinColumns = { @JoinColumn(name = "user_account_informations_id") }, inverseJoinColumns = { @JoinColumn(name = "userPartner_account_id") })
 	 Set<UserPartnerAccount> userPartner_account;
 	
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinTable(name = "historyTransaction_userAccountInformations", joinColumns = { @JoinColumn(name = "user_account_informations_id") }, inverseJoinColumns = { @JoinColumn(name = "history_transaction_id") })
-	Set<HistoryTransaction> historyTransaction;
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "user_account_informations")
+	//@JoinTable(name = "historyTransactionAndUserAccountInformations", joinColumns = { @JoinColumn(name = "user_account_informations_id") }, inverseJoinColumns = { @JoinColumn(name = "history_transaction_id") })
+	List<HistoryTransaction> historyTransaction;
 
 	
 	boolean state;
@@ -108,11 +108,11 @@ public class UserAccountInformations implements Serializable {
 		this.userPartner_account = userPartner_account;
 	}
 
-	public Set<HistoryTransaction> getHistoryTransaction() {
+	public List<HistoryTransaction> getHistoryTransaction() {
 		return historyTransaction;
 	}
 
-	public void setHistoryTransaction(Set<HistoryTransaction> historyTransaction) {
+	public void setHistoryTransaction(List<HistoryTransaction> historyTransaction) {
 		this.historyTransaction = historyTransaction;
 	}
 

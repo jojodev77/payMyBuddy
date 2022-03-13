@@ -16,6 +16,6 @@ public interface TransacService {
 	public Set<UserPartner> listUserPartner(long id);
 	public String requestTransaction(UserBuddy buddy);
 	public String addCash(AddCash cash);
-	public Set<HistoryResponse> getListHistory(UserBuddy buddy);
+	public List<HistoryResponse> getListHistory(UserBuddy buddy);
 	public AccountSituation accountSituation(UserBuddy buddy);
 }

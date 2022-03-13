@@ -118,15 +118,16 @@ public class TransactionService implements TransacService {
 			userS.get().getUserAccountInformations().setSoldAccount(
 					(int) (userS.get().getUserAccountInformations().getSoldAccount() - buddy.getAmount()));
 			HistoryTransaction historyTransaction = new HistoryTransaction();
-			Set<HistoryTransaction> lht = new HashSet<>();
+			List<HistoryTransaction> lht = new ArrayList<>();
 			historyTransaction.setDisplayName(userG.get().getDisplayName());
 			historyTransaction.setSoldAccount(userS.get().getUserAccountInformations().getSoldAccount());
 			historyTransaction.setDate(LocalDateTime.now());
 			historyTransaction.setUser_account_informations(userS.get().getUserAccountInformations());
 			historyTransaction.setAccount_reference_transaction(
-			userS.get().getUserAccountInformations().getAccountReferenceTransaction());
+			userG.get().getUserAccountInformations().getAccountReferenceTransaction());
 			lht.add(historyTransaction);
 			userS.get().getUserAccountInformations().setHistoryTransaction(lht);
+			System.out.println("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" + historyTransaction);
 			userS.get().getUserAccountInformations().getHistoryTransaction().add(historyTransaction);
 			userRepository.save(userS.get());
 			userRepository.save(userG.get());
@@ -178,7 +179,7 @@ public class TransactionService implements TransacService {
 	 * @Description get list of historyTransaction
 	 */
 	@Override
-	public Set<HistoryResponse> getListHistory(UserBuddy buddy) {
+	public List<HistoryResponse> getListHistory(UserBuddy buddy) {
 		if (buddy == null) {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("buddy informations is null");
 			throw new RuntimeException("buddy informations is null");
@@ -193,7 +194,7 @@ public class TransactionService implements TransacService {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not user found");
 			throw new RuntimeException("not history list");
 		} 
-		Set<HistoryResponse> listHistoryResponse = new HashSet<>();
+		List<HistoryResponse> listHistoryResponse = new ArrayList<>();
 			for (HistoryTransaction h : u.get().getUserAccountInformations().getHistoryTransaction()) {
 				HistoryResponse hr = new HistoryResponse();
 				hr.setDisplayName(h.getDisplayName());
@@ -205,7 +206,7 @@ public class TransactionService implements TransacService {
 				listHistoryResponse.add(hr);
 			
 		}
-
+		//	listHistoryResponse = dtoMapper.mapHistory(u.get().getUserAccountInformations().getHistoryTransaction());
 		return listHistoryResponse;
 	}
 
