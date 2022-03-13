@@ -1,6 +1,7 @@
 package pmb.pmb.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import pmb.pmb.config.AppConstants;
+import pmb.pmb.config.DtoMapper;
 import pmb.pmb.dto.AccountSituation;
 import pmb.pmb.dto.AddBuddy;
 import pmb.pmb.dto.AddCash;
@@ -44,6 +46,9 @@ public class TransactionService implements TransacService {
 
 	@Autowired
 	UserAccountInfomationsRepository userAccountInfomationsRepository;
+	
+	@Autowired
+	DtoMapper dtoMapper;
 
 	/**
 	 * 
@@ -71,6 +76,7 @@ public class TransactionService implements TransacService {
 		userPartner.setUserRefTransaction(ug.getUserAccountInformations().getAccountReferenceTransaction());
 		userPartner.setUserAccountInformations(ug.getUserAccountInformations());
 		Set<UserPartnerAccount> lup = new HashSet<>();
+		us.getUserAccountInformations().getUserPartner_account().forEach(lup::add );
 		lup.add(userPartner);
 		us.getUserAccountInformations().setUserPartner_account(lup);
 		us.getUserAccountInformations().getUserPartner_account().add(userPartner);
@@ -138,15 +144,15 @@ public class TransactionService implements TransacService {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not list user found");
 			throw new RuntimeException("not list user found");
 		}
-		UserPartner userPartner = new UserPartner();
+		UserPartner up = new UserPartner();
 		Set<UserPartner> listUserPartner = new HashSet<UserPartner>();
-		System.out.println("@@@@@@@@@#" + user.get().getUserAccountInformations().getUserPartner_account());
-		for (UserPartnerAccount u : user.get().getUserAccountInformations().getUserPartner_account()) {
-			userPartner.setDisplayName(u.getDisplayName());
-			userPartner.setUserRefTransaction(u.getUserAccountInformations().getAccountReferenceTransaction());
-			listUserPartner.add(userPartner);
+		List<UserPartnerAccount> lip = new ArrayList<>();
+		UserPartnerAccount us = new UserPartnerAccount();
+		for (UserPartnerAccount upa : user.get().getUserAccountInformations().getUserPartner_account()) {
+		    lip.add(upa);
 		}
-
+		listUserPartner = dtoMapper.map(user.get().getUserAccountInformations().getUserPartner_account());
+		
 		return listUserPartner;
 	}
 

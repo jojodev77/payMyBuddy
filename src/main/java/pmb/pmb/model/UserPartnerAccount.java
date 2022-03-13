@@ -1,6 +1,11 @@
 package pmb.pmb.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,9 +15,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pmb.pmb.dto.UserPartner;
 
 @Entity
 @AllArgsConstructor
@@ -30,6 +39,8 @@ public class UserPartnerAccount implements Serializable {
 	String userRefTransaction;
 	
 	String displayName;
+	
+
 
 	public long getId() {
 		return id;
@@ -62,5 +73,9 @@ public class UserPartnerAccount implements Serializable {
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
 	}
+	
+	
+	
+	
 
 }
