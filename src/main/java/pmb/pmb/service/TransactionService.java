@@ -128,7 +128,7 @@ public class TransactionService implements TransacService {
 			lht.add(historyTransaction);
 			userS.get().getUserAccountInformations().setHistoryTransaction(lht);
 			System.out.println("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" + historyTransaction);
-			userS.get().getUserAccountInformations().getHistoryTransaction().add(historyTransaction);
+			//userS.get().getUserAccountInformations().getHistoryTransaction().add(historyTransaction);
 			userRepository.save(userS.get());
 			userRepository.save(userG.get());
 		}
