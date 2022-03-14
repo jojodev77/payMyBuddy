@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 
 import pmb.pmb.config.CurrentUser;
+import pmb.pmb.config.ExcludeFromJacocoGeneratedReport;
 import pmb.pmb.dto.JwtUserResponse;
 import pmb.pmb.dto.LocalUser;
 import pmb.pmb.dto.LoginRequest;
@@ -64,8 +65,8 @@ public class UserController {
 	 */
 	@GetMapping("/user/me")
 	@PreAuthorize("hasRole('USER')")
+	@ExcludeFromJacocoGeneratedReport
 	public ResponseEntity<?> getCurrentUser(@CurrentUser LocalUser user) {
-	System.out.println("~~~~~~~~~~~~~~~~~éééé" + GeneralUtils.buildUserInfo(user));
 	
 	return ResponseEntity.ok(GeneralUtils.buildUserInfo(user));
 	}

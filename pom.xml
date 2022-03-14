@@ -259,6 +259,8 @@
 						<exclude>**/*security/oauth2*/**</exclude>
 						<exclude>**/*security/oauth2/user*/**</exclude>
 						<exclude>**/Lambda**</exclude>
+						<exclude>Lambda/**</exclude>
+						<exclude>**/*PmbApplication.class*/**</exclude>
 					</excludes>
 				</configuration>
 				<reportSets>

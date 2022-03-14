@@ -83,7 +83,7 @@ public class TransacServiceTest {
 		UserAccountInformations userAccountInformation = new UserAccountInformations();
 		userAccountInformation.setAccountReferenceTransaction("pmbt@tttotb");
 		userAccountInformation.setSoldAccount(100);
-		bud.setUserGetter("pmbaminminb");
+		bud.setUserGetter("pmbtta@tatb");
 		bud.setUserSetter("pmbt@tttotb");
 		user.setId((long) 1);
 		user.setDisplayName("totototo");
@@ -91,10 +91,10 @@ public class TransacServiceTest {
 		user.setPassword("tototo");
 		user.setUserAccountInformations(userAccountInformation);
 		UserAccountInformations userAccountInformation1 = new UserAccountInformations();
-		userAccountInformation1.setAccountReferenceTransaction("pmbt@tttotb");
+		userAccountInformation1.setAccountReferenceTransaction("pmbtta@tatb");
 		userAccountInformation1.setSoldAccount(100);
 		User user1 = new User();
-		user1.setId((long) 1);
+		user1.setId((long) 3);
 		user1.setDisplayName("totototo");
 		user1.setEmail("pmbaminminb");
 		user1.setPassword("tototo");
@@ -102,7 +102,7 @@ public class TransacServiceTest {
 		listUser.add(user1);
 		listUser.add(user);
 //		//WHEN
-		lenient().when(userRepository.findAll()).thenReturn(listUser);
+	//	lenient().when(userRepository.findAll()).thenReturn(listUser);
 		lenient().when(userRepository.findByUserReferenceTransaction(anyString())).thenReturn(user);
 		lenient().when(userRepository.findByUserReferenceTransaction(anyString())).thenReturn(user1);
 //		//THEN

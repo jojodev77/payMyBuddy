@@ -2,23 +2,18 @@ package pmb.pmb.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import pmb.pmb.config.AppConstants;
 import pmb.pmb.config.DtoMapper;
 import pmb.pmb.dto.AccountSituation;
 import pmb.pmb.dto.AddBuddy;
@@ -27,9 +22,7 @@ import pmb.pmb.dto.HistoryResponse;
 import pmb.pmb.dto.UserBuddy;
 import pmb.pmb.dto.UserPartner;
 import pmb.pmb.model.HistoryTransaction;
-import pmb.pmb.model.Role;
 import pmb.pmb.model.User;
-import pmb.pmb.model.UserAccountInformations;
 import pmb.pmb.model.UserPartnerAccount;
 import pmb.pmb.repo.RoleRepository;
 import pmb.pmb.repo.UserAccountInfomationsRepository;
@@ -46,7 +39,7 @@ public class TransactionService implements TransacService {
 
 	@Autowired
 	UserAccountInfomationsRepository userAccountInfomationsRepository;
-	
+
 	@Autowired
 	DtoMapper dtoMapper;
 
@@ -72,16 +65,18 @@ public class TransactionService implements TransacService {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("user not found");
 			throw new RuntimeException("user getter not found");
 		}
+		Set<UserPartnerAccount> lup = new HashSet<>();
 		userPartner.setDisplayName(ug.getDisplayName());
 		userPartner.setUserRefTransaction(ug.getUserAccountInformations().getAccountReferenceTransaction());
 		userPartner.setUserAccountInformations(ug.getUserAccountInformations());
-		Set<UserPartnerAccount> lup = new HashSet<>();
-		us.getUserAccountInformations().getUserPartner_account().forEach(lup::add );
+	if (us.getUserAccountInformations().getUserPartner_account() != null) {
+		us.getUserAccountInformations().getUserPartner_account().forEach(lup::add);
 		lup.add(userPartner);
+	}
 		us.getUserAccountInformations().setUserPartner_account(lup);
 		us.getUserAccountInformations().getUserPartner_account().add(userPartner);
 		userRepository.save(us);
-		
+
 		return mess;
 
 	}
@@ -124,11 +119,11 @@ public class TransactionService implements TransacService {
 			historyTransaction.setDate(LocalDateTime.now());
 			historyTransaction.setUser_account_informations(userS.get().getUserAccountInformations());
 			historyTransaction.setAccount_reference_transaction(
-			userG.get().getUserAccountInformations().getAccountReferenceTransaction());
+					userG.get().getUserAccountInformations().getAccountReferenceTransaction());
 			lht.add(historyTransaction);
 			userS.get().getUserAccountInformations().setHistoryTransaction(lht);
 			System.out.println("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" + historyTransaction);
-			//userS.get().getUserAccountInformations().getHistoryTransaction().add(historyTransaction);
+			// userS.get().getUserAccountInformations().getHistoryTransaction().add(historyTransaction);
 			userRepository.save(userS.get());
 			userRepository.save(userG.get());
 		}
@@ -150,10 +145,10 @@ public class TransactionService implements TransacService {
 		List<UserPartnerAccount> lip = new ArrayList<>();
 		UserPartnerAccount us = new UserPartnerAccount();
 		for (UserPartnerAccount upa : user.get().getUserAccountInformations().getUserPartner_account()) {
-		    lip.add(upa);
+			lip.add(upa);
 		}
 		listUserPartner = dtoMapper.map(user.get().getUserAccountInformations().getUserPartner_account());
-		
+
 		return listUserPartner;
 	}
 
@@ -189,24 +184,24 @@ public class TransactionService implements TransacService {
 		if (!u.isPresent()) {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not user found");
 			throw new RuntimeException("not user found");
-		} 
+		}
 		if (u.get().getUserAccountInformations().getHistoryTransaction().size() < 0) {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("not user found");
 			throw new RuntimeException("not history list");
-		} 
-		List<HistoryResponse> listHistoryResponse = new ArrayList<>();
-			for (HistoryTransaction h : u.get().getUserAccountInformations().getHistoryTransaction()) {
-				HistoryResponse hr = new HistoryResponse();
-				hr.setDisplayName(h.getDisplayName());
-				hr.setDate(h.getDate());
-				hr.setSoldAccount(h.getSoldAccount());
-				hr.setAccountReferenceTransaction(
-						u.get().getUserAccountInformations().getAccountReferenceTransaction());
-				hr.setSoldAccount(h.getSoldAccount());
-				listHistoryResponse.add(hr);
-			
 		}
-		//	listHistoryResponse = dtoMapper.mapHistory(u.get().getUserAccountInformations().getHistoryTransaction());
+		List<HistoryResponse> listHistoryResponse = new ArrayList<>();
+		for (HistoryTransaction h : u.get().getUserAccountInformations().getHistoryTransaction()) {
+			HistoryResponse hr = new HistoryResponse();
+			hr.setDisplayName(h.getDisplayName());
+			hr.setDate(h.getDate());
+			hr.setSoldAccount(h.getSoldAccount());
+			hr.setAccountReferenceTransaction(u.get().getUserAccountInformations().getAccountReferenceTransaction());
+			hr.setSoldAccount(h.getSoldAccount());
+			listHistoryResponse.add(hr);
+
+		}
+		// listHistoryResponse =
+		// dtoMapper.mapHistory(u.get().getUserAccountInformations().getHistoryTransaction());
 		return listHistoryResponse;
 	}
 
@@ -223,7 +218,7 @@ public class TransactionService implements TransacService {
 
 			accountSituation.setSoldAccount(user.get().getUserAccountInformations().getSoldAccount());
 			accountSituation.setAccountReferenceTransaction(
-			user.get().getUserAccountInformations().getAccountReferenceTransaction());
+					user.get().getUserAccountInformations().getAccountReferenceTransaction());
 		}
 		return accountSituation;
 	}

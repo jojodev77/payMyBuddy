@@ -31,6 +31,7 @@ public class PmbApplication extends SpringBootServletInitializer {
 	}
 
 	@Override
+	@ExcludeFromJacocoGeneratedReport
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(PmbApplication.class);
 	}
