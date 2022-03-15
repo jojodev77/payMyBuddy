@@ -228,24 +228,21 @@ public class TransactionService implements TransacService {
 	 */
 	@Override
 	public String deleteBuddy(UserBuddy buddy) {
+	
 		Optional<User> ug = Optional.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserGetter()));
-		Optional<User> us = Optional.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserGetter()));
+		Optional<User> us = Optional.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
 		if (ug.isPresent()) {
-			if (us.isPresent()) {
-
-				for (UserPartnerAccount up : us.get().getUserAccountInformations().getUserPartner_account()) {
-					if (up.getUserRefTransaction() == buddy.getUserGetter()) {
-						us.get().getUserAccountInformations().getUserPartner_account().remove(up);
+			ug.get().getUserAccountInformations().getUserPartner_account().removeIf(u -> u.getUserAccountInformations().getAccountReferenceTransaction().contains(buddy.getUserSetter()));
+						
 						userRepository.save(us.get());
-					}
-				}
-				throw new RuntimeException("error with this delete");
+			
+					
+//				throw new RuntimeException("error with this delete");
 
 			} else {
 				throw new RuntimeException("not user found");
 			}
-		}
-		return "buddy " + buddy.getUserGetter() + "delete";
+		return "buddy " + buddy.getUserSetter() + "delete";
 	}
-
+	
 }
