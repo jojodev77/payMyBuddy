@@ -5,10 +5,15 @@ import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,17 +22,21 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import pmb.pmb.dto.JwtUserResponse;
 import pmb.pmb.dto.SignUpRequest;
 import pmb.pmb.dto.SocialProvider;
 import pmb.pmb.dto.UserReferenceTransaction;
 import pmb.pmb.exception.UserAlreadyExistAuthenticationException;
+import pmb.pmb.model.Role;
 import pmb.pmb.model.User;
 import pmb.pmb.model.UserAccountInformations;
+import pmb.pmb.repo.RoleRepository;
 import pmb.pmb.repo.UserRepository;
 import pmb.pmb.security.oauth2.user.OAuth2UserInfo;
 import pmb.pmb.service.UserAccountRegistrationService;
@@ -43,9 +52,14 @@ public class UserServiceTest {
 
 	@Mock
 	UserRepository userRepository;
+	
+	@Mock
+	private RoleRepository roleRepository;
 
 	@Mock
 	private UserAccountRegistrationService userAccountRegistrationService;
+	@Mock
+	private PasswordEncoder passwordEncoder;
 	
 	
 	String email = "admin@jojo";
@@ -64,19 +78,35 @@ public class UserServiceTest {
 	/**
 	 * @Description test new User with success
 	 */
-//	@Test
-//	public void registerNewUserWithSuccessTest() {
-//		// GIVEN
-//		SignUpRequest signUpRequest = new SignUpRequest("1", "jojo", "o@h.com", "testj", SocialProvider.GOOGLE);
-//	
-//		
-//		// WHEN
-//		lenient().when(userAccountRegistrationService.attributeAccountInformations(any(User.class)))
-//				.thenReturn(user.getUserAccountInformations());
-//		userService.registerNewUser(signUpRequest);
-//		// THEN
-//		verify(userService).registerNewUser(signUpRequest);
-//	}
+	@Test
+	public void registerNewUserWithSuccessTest() {
+		// GIVEN
+		UserAccountInformations userAccountInformation = new UserAccountInformations();
+		userAccountInformation.setAccountReferenceTransaction("pmbt@tttotb");
+		userAccountInformation.setSoldAccount(100);
+		user.setId((long) 1);
+		user.setDisplayName("totototo");
+		user.setEmail("ttsssssssssddddd@tt.fr");
+		user.setPassword("tototo");
+		final HashSet<Role> roles = new HashSet<Role>();
+		roles.add(roleRepository.findByName(Role.ROLE_USER));
+		user.setRoles(roles);
+		user.setUserAccountInformations(userAccountInformation);
+		user.setEnabled(true);
+		SignUpRequest signUpRequest = new SignUpRequest(null, "jojo", "odddfrfff@h.com", "testj", SocialProvider.GOOGLE);
+		userService = spy(new UserServiceImpl());
+		// WHEN
+		lenient().when(userRepository.existsById(any()))
+		.thenReturn(true);
+		lenient().when(userRepository.existsByEmail(user.getEmail()))
+				.thenReturn(true);
+		lenient().when(userAccountRegistrationService.attributeAccountInformations(any()))
+		.thenReturn(user.getUserAccountInformations());
+		userService.registerNewUser(signUpRequest);
+		Mockito.doNothing().when(userRepository).flush();
+		// THEN
+		verify(userService).registerNewUser(signUpRequest);
+	}
 
 	/**
 	 * @Description test new User with Error

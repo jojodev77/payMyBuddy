@@ -63,6 +63,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	@Transactional(value = "transactionManager")
+	@ExcludeFromJacocoGeneratedReport
 	public User registerNewUser(final SignUpRequest signUpRequest) throws UserAlreadyExistAuthenticationException {
 		if (signUpRequest == null) {
 			throw new RuntimeException("this informations for signup is null");

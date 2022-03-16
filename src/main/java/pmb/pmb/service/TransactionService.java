@@ -69,10 +69,10 @@ public class TransactionService implements TransacService {
 		userPartner.setDisplayName(ug.getDisplayName());
 		userPartner.setUserRefTransaction(ug.getUserAccountInformations().getAccountReferenceTransaction());
 		userPartner.setUserAccountInformations(ug.getUserAccountInformations());
-	if (us.getUserAccountInformations().getUserPartner_account() != null) {
-		us.getUserAccountInformations().getUserPartner_account().forEach(lup::add);
-		lup.add(userPartner);
-	}
+		if (us.getUserAccountInformations().getUserPartner_account() != null) {
+			us.getUserAccountInformations().getUserPartner_account().forEach(lup::add);
+			lup.add(userPartner);
+		}
 		us.getUserAccountInformations().setUserPartner_account(lup);
 		us.getUserAccountInformations().getUserPartner_account().add(userPartner);
 		userRepository.save(us);
@@ -228,21 +228,19 @@ public class TransactionService implements TransacService {
 	 */
 	@Override
 	public String deleteBuddy(UserBuddy buddy) {
-	
+
 		Optional<User> ug = Optional.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserGetter()));
 		Optional<User> us = Optional.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
 		if (ug.isPresent()) {
-			ug.get().getUserAccountInformations().getUserPartner_account().removeIf(u -> u.getUserAccountInformations().getAccountReferenceTransaction().contains(buddy.getUserSetter()));
-						
-						userRepository.save(us.get());
-			
-					
-//				throw new RuntimeException("error with this delete");
+			ug.get().getUserAccountInformations().getUserPartner_account().removeIf(u -> u.getUserAccountInformations()
+					.getAccountReferenceTransaction().contains(buddy.getUserSetter()));
 
-			} else {
-				throw new RuntimeException("not user found");
-			}
+			userRepository.save(us.get());
+
+		} else {
+			throw new RuntimeException("not user found");
+		}
 		return "buddy " + buddy.getUserSetter() + "delete";
 	}
-	
+
 }
