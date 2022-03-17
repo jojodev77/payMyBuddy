@@ -115,9 +115,7 @@ public class UserServiceImpl implements UserService {
 	@ExcludeFromJacocoGeneratedReport
 	public LocalUser processUserRegistration(String registrationId, Map<String, Object> attributes, OidcIdToken idToken,
 			OidcUserInfo userInfo) {
-		if (registrationId == null || userInfo == null) {
-			throw new RuntimeException("Error: informations from social login is not found");
-		}
+
 		OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, attributes);
 		if (StringUtils.isEmpty(oAuth2UserInfo.getName())) {
 			throw new OAuth2AuthenticationProcessingException("Name not found from OAuth2 provider");

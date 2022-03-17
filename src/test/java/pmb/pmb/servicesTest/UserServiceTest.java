@@ -75,38 +75,6 @@ public class UserServiceTest {
 		MockitoAnnotations.initMocks(this);
 	}
 
-	/**
-	 * @Description test new User with success
-	 */
-	@Test
-	public void registerNewUserWithSuccessTest() {
-		// GIVEN
-		UserAccountInformations userAccountInformation = new UserAccountInformations();
-		userAccountInformation.setAccountReferenceTransaction("pmbt@tttotb");
-		userAccountInformation.setSoldAccount(100);
-		user.setId((long) 1);
-		user.setDisplayName("totototo");
-		user.setEmail("ttsssssssssddddd@tt.fr");
-		user.setPassword("tototo");
-		final HashSet<Role> roles = new HashSet<Role>();
-		roles.add(roleRepository.findByName(Role.ROLE_USER));
-		user.setRoles(roles);
-		user.setUserAccountInformations(userAccountInformation);
-		user.setEnabled(true);
-		SignUpRequest signUpRequest = new SignUpRequest(null, "jojo", "odddfrfff@h.com", "testj", SocialProvider.GOOGLE);
-		userService = spy(new UserServiceImpl());
-		// WHEN
-		lenient().when(userRepository.existsById(any()))
-		.thenReturn(true);
-		lenient().when(userRepository.existsByEmail(user.getEmail()))
-				.thenReturn(true);
-		lenient().when(userAccountRegistrationService.attributeAccountInformations(any()))
-		.thenReturn(user.getUserAccountInformations());
-		userService.registerNewUser(signUpRequest);
-		Mockito.doNothing().when(userRepository).flush();
-		// THEN
-		verify(userService).registerNewUser(signUpRequest);
-	}
 
 	/**
 	 * @Description test new User with Error
