@@ -23,7 +23,7 @@ import pmb.pmb.config.ExcludeFromJacocoGeneratedReport;
 import pmb.pmb.dto.JwtUserResponse;
 import pmb.pmb.dto.LocalUser;
 import pmb.pmb.dto.LoginRequest;
-import pmb.pmb.dto.UserBuddy;
+import pmb.pmb.dto.Buddy;
 import pmb.pmb.dto.UserReferenceTransaction;
 import pmb.pmb.model.User;
 import pmb.pmb.repo.UserRepository;

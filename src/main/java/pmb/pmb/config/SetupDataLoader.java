@@ -37,6 +37,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 	@Autowired
 	UserAccountRegistrationService userAccountRegistrationService;
 
+	/**
+	 * @Description initialize data of started appalication
+	 */
 	@Override
 	@Transactional
 	public void onApplicationEvent(final ContextRefreshedEvent event) {

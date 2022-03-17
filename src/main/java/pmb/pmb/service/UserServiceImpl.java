@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +17,6 @@ import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
 
 import pmb.pmb.config.ExcludeFromJacocoGeneratedReport;
 import pmb.pmb.dto.JwtUserResponse;
@@ -34,7 +30,6 @@ import pmb.pmb.model.Role;
 import pmb.pmb.model.User;
 import pmb.pmb.model.UserAccountInformations;
 import pmb.pmb.repo.RoleRepository;
-import pmb.pmb.repo.UserAccountInfomationsRepository;
 import pmb.pmb.repo.UserRepository;
 import pmb.pmb.security.oauth2.user.OAuth2UserInfo;
 import pmb.pmb.security.oauth2.user.OAuth2UserInfoFactory;
@@ -54,9 +49,6 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserAccountRegistrationService userAccountRegistrationService;
-
-	@Autowired
-	private UserAccountInfomationsRepository userAccountInfomationsRepository;
 
 	/**
 	 * method for add new user
@@ -82,6 +74,9 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
+	/**
+	 * @Description private method for build user object
+	 */
 	@ExcludeFromJacocoGeneratedReport
 	private User buildUser(final SignUpRequest formDTO) {
 		if (formDTO == null) {
@@ -105,8 +100,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	@ExcludeFromJacocoGeneratedReport
-	public User findUserByEmail( String email) {
-		System.out.println("........................email" + email);
+	public User findUserByEmail(String email) {
 		if (email == null) {
 			throw new RuntimeException("Error: email is null");
 		}
@@ -121,9 +115,9 @@ public class UserServiceImpl implements UserService {
 	@ExcludeFromJacocoGeneratedReport
 	public LocalUser processUserRegistration(String registrationId, Map<String, Object> attributes, OidcIdToken idToken,
 			OidcUserInfo userInfo) {
-//		if (registrationId == null || userInfo == null) {
-//			throw new RuntimeException("Error: informations from social login is not found");
-//		}
+		if (registrationId == null || userInfo == null) {
+			throw new RuntimeException("Error: informations from social login is not found");
+		}
 		OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, attributes);
 		if (StringUtils.isEmpty(oAuth2UserInfo.getName())) {
 			throw new OAuth2AuthenticationProcessingException("Name not found from OAuth2 provider");
@@ -161,7 +155,7 @@ public class UserServiceImpl implements UserService {
 		existingUser.setDisplayName(oAuth2UserInfo.getName());
 		return userRepository.save(existingUser);
 	}
-	
+
 	@ExcludeFromJacocoGeneratedReport
 	private SignUpRequest toUserRegistrationObject(String registrationId, OAuth2UserInfo oAuth2UserInfo) {
 		return SignUpRequest.getBuilder().addProviderUserID(oAuth2UserInfo.getId())
@@ -178,7 +172,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
-	 * 
+	 * @Description method for get jwt informations with email connexion method
 	 */
 	@Override
 	public JwtUserResponse getJwtUserResponseByEmail(String jwt, String email) {
@@ -186,13 +180,18 @@ public class UserServiceImpl implements UserService {
 			ResponseEntity.status(HttpStatus.BAD_REQUEST).body("email client is null");
 			throw new RuntimeException("email is null");
 		}
+
 		Optional<User> user = Optional.ofNullable(userRepository.foundByEmail(email));
+
 		if (!user.isPresent()) {
 			ResponseEntity.status(HttpStatus.NO_CONTENT).body("not user found");
 		}
+
 		List<String> roles = new ArrayList<String>();
-		roles.add(Role.ROLE_USER);
 		UserAccountInformations userAccountInformations = new UserAccountInformations();
+
+		roles.add(Role.ROLE_USER);
+
 		userAccountInformations.setSoldAccount(user.get().getUserAccountInformations().getSoldAccount());
 		userAccountInformations.setAccountReferenceTransaction(
 				user.get().getUserAccountInformations().getAccountReferenceTransaction());
@@ -202,15 +201,17 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
-	 * @Description het list of accountReferenceTransaction 
+	 * @Description het list of accountReferenceTransaction
 	 */
 	@Override
 	public ArrayList<UserReferenceTransaction> listReferenceTransaction() {
 		ArrayList<UserReferenceTransaction> listUserReferenceTransactions = new ArrayList<>();
 		List<User> listUser = userRepository.findAll();
+
 		if (listUser.isEmpty()) {
 			ResponseEntity.status(HttpStatus.NO_CONTENT).body("not list user found");
 		}
+
 		for (User u : listUser) {
 			UserReferenceTransaction userReferenceTransaction = new UserReferenceTransaction();
 			userReferenceTransaction
@@ -219,7 +220,6 @@ public class UserServiceImpl implements UserService {
 
 			if (!listUserReferenceTransactions.contains(userReferenceTransaction)) {
 				listUserReferenceTransactions.add(userReferenceTransaction);
-				// listUserReferenceTransactions.add(userReferenceTransaction);
 			}
 		}
 
@@ -230,6 +230,9 @@ public class UserServiceImpl implements UserService {
 		return listUserReferenceTransactions;
 	}
 
+	/**
+	 * @Description method for get user with this id
+	 */
 	@Override
 	public User getUserById(long id) {
 		Optional<User> u = Optional.ofNullable(userRepository.findUserById(id));
@@ -240,33 +243,42 @@ public class UserServiceImpl implements UserService {
 		return u.get();
 	}
 
+	/**
+	 * @Description method for get user with this email
+	 */
 	@Override
 	@ExcludeFromJacocoGeneratedReport
 	public JwtUserResponse getUserByEmail(String email) {
-	Optional<User> u = Optional.ofNullable(userRepository.findByEmail(email));
-	JwtUserResponse jwtUserResponse = new JwtUserResponse(null, u.get().getId(),u.get().getEmail(), u.get().getDisplayName(), null, u.get().getUserAccountInformations());
+		Optional<User> u = Optional.ofNullable(userRepository.findByEmail(email));
+		JwtUserResponse jwtUserResponse = new JwtUserResponse(null, u.get().getId(), u.get().getEmail(),
+				u.get().getDisplayName(), null, u.get().getUserAccountInformations());
 		return jwtUserResponse;
 	}
 
 	@Override
 	@ExcludeFromJacocoGeneratedReport
 	public UserAccountInformations getUserInfo(long id) {
-	Optional<User> u = userRepository.findById(id);
-	UserAccountInformations userAccountInformations = new  UserAccountInformations();
-	userAccountInformations.setAccountReferenceTransaction(u.get().getUserAccountInformations().getAccountReferenceTransaction());
-	userAccountInformations.setSoldAccount(u.get().getUserAccountInformations().getSoldAccount());
-	if (userAccountInformations != null) {
-		throw new RuntimeException("Null informations of account");
-	}
+		Optional<User> u = userRepository.findById(id);
+		UserAccountInformations userAccountInformations = new UserAccountInformations();
+		userAccountInformations
+				.setAccountReferenceTransaction(u.get().getUserAccountInformations().getAccountReferenceTransaction());
+		userAccountInformations.setSoldAccount(u.get().getUserAccountInformations().getSoldAccount());
+		if (userAccountInformations != null) {
+			throw new RuntimeException("Null informations of account");
+		}
 		return userAccountInformations;
 	}
-	
+
+	/**
+	 * @Description method for annotation of exist test mockito
+	 * @param annotation
+	 * @return
+	 */
 	@ExcludeFromJacocoGeneratedReport
-	  private static boolean matches(final String annotation) {
-		    final String name = annotation
-		            .substring(Math.max(annotation.lastIndexOf('/'),
-		                    annotation.lastIndexOf('$')) + 1);
-		    return name.contains("Generated");
-		  }
+	private static boolean matches(final String annotation) {
+		final String name = annotation
+				.substring(Math.max(annotation.lastIndexOf('/'), annotation.lastIndexOf('$')) + 1);
+		return name.contains("Generated");
+	}
 
 }

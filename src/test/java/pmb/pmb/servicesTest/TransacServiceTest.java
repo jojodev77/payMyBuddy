@@ -23,10 +23,9 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import pmb.pmb.dto.AddBuddy;
 import pmb.pmb.dto.AddCash;
 import pmb.pmb.dto.HistoryResponse;
-import pmb.pmb.dto.UserBuddy;
+import pmb.pmb.dto.Buddy;
 import pmb.pmb.dto.UserPartner;
 import pmb.pmb.model.HistoryTransaction;
 import pmb.pmb.model.User;
@@ -51,8 +50,7 @@ public class TransacServiceTest {
 
 	List<User> listUser = new ArrayList<>();
 
-	UserBuddy buddy = new UserBuddy();
-	AddBuddy ab = new AddBuddy();
+	Buddy buddy = new Buddy();
 
 	@BeforeEach
 	private void setUpPerTest() {
@@ -66,7 +64,7 @@ public class TransacServiceTest {
 	@Test
 	public void addUserBuddySuccesTest() {
 //		//GIVEN
-		AddBuddy bud = new AddBuddy();
+		Buddy bud = new Buddy();
 		UserAccountInformations userAccountInformation = new UserAccountInformations();
 		userAccountInformation.setAccountReferenceTransaction("pmbt@tttotb");
 		userAccountInformation.setSoldAccount(100);
@@ -104,7 +102,7 @@ public class TransacServiceTest {
 	@Test
 	public void addUserBuddyErrorWhenBuddyIsNullTest() {
 		// GIVEN
-		AddBuddy buddy = new AddBuddy();
+		Buddy buddy = new Buddy();
 		buddy.setUserGetter(null);
 		String message = "";
 		user.setDisplayName("jojo");
@@ -132,7 +130,7 @@ public class TransacServiceTest {
 	@Test
 	public void addUserBuddyErrorWhenListUserTest() {
 		// GIVEN
-		AddBuddy buddy = new AddBuddy();
+		Buddy buddy = new Buddy();
 		buddy.setUserGetter("pmbfrtest");
 		buddy.setUserSetter("pmbaminminb");
 		String message = "";
@@ -200,7 +198,7 @@ public class TransacServiceTest {
 	@Test
 	public void requestTransactionErrorWhenBuddyGetterIsNullTest() {
 		// GIVEN
-		UserBuddy buddy = new UserBuddy();
+		Buddy buddy = new Buddy();
 		buddy.setUserGetter(null);
 		buddy.setUserSetter("pmbaminminb");
 		buddy.setAmount(10);
@@ -220,7 +218,7 @@ public class TransacServiceTest {
 	@Test
 	public void requestTransactionErrorWhenBuddySetterIsNullTest() {
 		// GIVEN
-		UserBuddy buddy = new UserBuddy();
+		Buddy buddy = new Buddy();
 		buddy.setUserGetter("pmbfrtest");
 		buddy.setUserSetter(null);
 		buddy.setAmount(10);
@@ -241,7 +239,7 @@ public class TransacServiceTest {
 	@Test
 	public void requestTransactionErrorWhenUserSoldAccountIsMoreOnTransfertNecessaryIsNullTest() {
 		// GIVEN
-		UserBuddy buddy = new UserBuddy();
+		Buddy buddy = new Buddy();
 		buddy.setUserGetter("pmbfrtest");
 		buddy.setUserSetter(null);
 		buddy.setAmount(10);
@@ -402,7 +400,7 @@ public class TransacServiceTest {
 	@Test
 	public void getListHistoryErrorWhenBuddyIsNullTest() {
 		// GIVEN
-		UserBuddy buddy = new UserBuddy();
+		Buddy buddy = new Buddy();
 		UserAccountInformations userAccountInformation = new UserAccountInformations();
 		UserPartner userPartner = new UserPartner();
 		userPartner.setDisplayName("ddd");

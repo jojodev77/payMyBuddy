@@ -19,6 +19,9 @@ public class LocalUserDetailService implements UserDetailsService {
 	@Autowired
 	private UserService userService;
 
+	/**
+	 * @Description method for get user with this email
+	 */
 	@Override
 	@Transactional
 	public LocalUser loadUserByUsername(final String email) throws UsernameNotFoundException {
@@ -29,6 +32,10 @@ public class LocalUserDetailService implements UserDetailsService {
 		return createLocalUser(user);
 	}
 
+	
+	/**
+	 * @Description method for get user with this id
+	 */
 	@Transactional
 	@ExcludeFromJacocoGeneratedReport
 	public LocalUser loadUserById(Long id) {
@@ -39,6 +46,7 @@ public class LocalUserDetailService implements UserDetailsService {
 	/**
 	 * @param user
 	 * @return
+	 * @Description method for build user object with social login create user
 	 */
 	@ExcludeFromJacocoGeneratedReport
 	private LocalUser createLocalUser(User user) {

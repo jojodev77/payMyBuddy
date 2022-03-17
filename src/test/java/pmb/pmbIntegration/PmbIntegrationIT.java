@@ -1,7 +1,5 @@
 package pmb.pmbIntegration;
 
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
@@ -18,8 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import pmb.pmb.dto.AddBuddy;
-import pmb.pmb.dto.UserBuddy;
+import pmb.pmb.dto.Buddy;
 import pmb.pmb.model.HistoryTransaction;
 import pmb.pmb.model.User;
 import pmb.pmb.model.UserAccountInformations;
@@ -37,8 +34,7 @@ public class PmbIntegrationIT {
 
 	User user = new User();
 	User user1 = new User();
-	UserBuddy buddy = new UserBuddy();
-	AddBuddy ab = new AddBuddy();
+	Buddy buddy = new Buddy();
 	
 	@Mock
 	UserRepository userRepository;
@@ -62,7 +58,7 @@ public class PmbIntegrationIT {
 	@Test
 	public void testScenarioForTransaction() {
 		//GIVEN
-		AddBuddy bud = new AddBuddy();
+		Buddy bud = new Buddy();
 		UserAccountInformations uai = new UserAccountInformations();
 		HistoryTransaction ht = new HistoryTransaction();
 		List<HistoryTransaction> lht = new ArrayList<>();

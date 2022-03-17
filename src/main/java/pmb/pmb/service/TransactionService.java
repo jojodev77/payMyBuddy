@@ -16,10 +16,9 @@ import org.springframework.stereotype.Service;
 
 import pmb.pmb.config.DtoMapper;
 import pmb.pmb.dto.AccountSituation;
-import pmb.pmb.dto.AddBuddy;
 import pmb.pmb.dto.AddCash;
 import pmb.pmb.dto.HistoryResponse;
-import pmb.pmb.dto.UserBuddy;
+import pmb.pmb.dto.Buddy;
 import pmb.pmb.dto.UserPartner;
 import pmb.pmb.model.HistoryTransaction;
 import pmb.pmb.model.User;
@@ -44,17 +43,21 @@ public class TransactionService implements TransacService {
 	DtoMapper dtoMapper;
 
 	/**
+	 * INFORMATIONS FROM THIS METHOD UserS = userSetter = property of account UserG
+	 * = userGetter = buddy partner
+	 */
+
+	/**
 	 * 
 	 * @Description add a buddy for transaction
 	 */
 	@Transactional()
-	public String addUserBuddy(AddBuddy buddy) {
+	public String addUserBuddy(Buddy buddy) {
 		UserPartnerAccount userPartner = new UserPartnerAccount();
 		if (buddy.getUserGetter() == null) {
 			throw new RuntimeException("buddy informations is null");
 		}
 		String mess = "buddy add  with success";
-		List<User> listUser = userRepository.findAll();
 		User us = userRepository.findByUserReferenceTransaction(buddy.getUserSetter());
 		User ug = userRepository.findByUserReferenceTransaction(buddy.getUserGetter());
 		if (us == null) {
@@ -66,9 +69,11 @@ public class TransactionService implements TransacService {
 			throw new RuntimeException("user getter not found");
 		}
 		Set<UserPartnerAccount> lup = new HashSet<>();
+
 		userPartner.setDisplayName(ug.getDisplayName());
 		userPartner.setUserRefTransaction(ug.getUserAccountInformations().getAccountReferenceTransaction());
 		userPartner.setUserAccountInformations(ug.getUserAccountInformations());
+
 		if (us.getUserAccountInformations().getUserPartner_account() != null) {
 			us.getUserAccountInformations().getUserPartner_account().forEach(lup::add);
 			lup.add(userPartner);
@@ -85,10 +90,11 @@ public class TransactionService implements TransacService {
 	 * @Description action for start transaction beetween buddy
 	 */
 	@Transactional
-	public String requestTransaction(UserBuddy buddy) {
+	public String requestTransaction(Buddy buddy) {
 		if (buddy.getUserGetter() == null) {
 			throw new RuntimeException("buddy informations is null");
 		}
+
 		String mess = "transfert with success";
 		Optional<User> userG = Optional
 				.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserGetter()));
@@ -105,25 +111,27 @@ public class TransactionService implements TransacService {
 			mess = "no user setter found";
 			throw new RuntimeException("no user setter found");
 		}
+
 		if (userS.get().getUserAccountInformations().getSoldAccount() - buddy.getAmount() < 0) {
 			throw new RuntimeException("you do not have the necessary means");
 		} else {
 			userG.get().getUserAccountInformations().setSoldAccount(
 					(int) (userG.get().getUserAccountInformations().getSoldAccount() + buddy.getAmount()));
 			userS.get().getUserAccountInformations().setSoldAccount(
-					(int) (userS.get().getUserAccountInformations().getSoldAccount() - buddy.getAmount()));
+					(int) (userS.get().getUserAccountInformations().getSoldAccount() - buddy.getAmount() - (buddy.getAmount() * 0.5/100)));
+
 			HistoryTransaction historyTransaction = new HistoryTransaction();
 			List<HistoryTransaction> lht = new ArrayList<>();
+
 			historyTransaction.setDisplayName(userG.get().getDisplayName());
 			historyTransaction.setSoldAccount(userS.get().getUserAccountInformations().getSoldAccount());
 			historyTransaction.setDate(LocalDateTime.now());
 			historyTransaction.setUser_account_informations(userS.get().getUserAccountInformations());
 			historyTransaction.setAccount_reference_transaction(
 					userG.get().getUserAccountInformations().getAccountReferenceTransaction());
+
 			lht.add(historyTransaction);
 			userS.get().getUserAccountInformations().setHistoryTransaction(lht);
-			System.out.println("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" + historyTransaction);
-			// userS.get().getUserAccountInformations().getHistoryTransaction().add(historyTransaction);
 			userRepository.save(userS.get());
 			userRepository.save(userG.get());
 		}
@@ -174,7 +182,7 @@ public class TransactionService implements TransacService {
 	 * @Description get list of historyTransaction
 	 */
 	@Override
-	public List<HistoryResponse> getListHistory(UserBuddy buddy) {
+	public List<HistoryResponse> getListHistory(Buddy buddy) {
 		if (buddy == null) {
 			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("buddy informations is null");
 			throw new RuntimeException("buddy informations is null");
@@ -190,18 +198,17 @@ public class TransactionService implements TransacService {
 			throw new RuntimeException("not history list");
 		}
 		List<HistoryResponse> listHistoryResponse = new ArrayList<>();
+
 		for (HistoryTransaction h : u.get().getUserAccountInformations().getHistoryTransaction()) {
 			HistoryResponse hr = new HistoryResponse();
 			hr.setDisplayName(h.getDisplayName());
 			hr.setDate(h.getDate());
 			hr.setSoldAccount(h.getSoldAccount());
-			hr.setAccountReferenceTransaction(u.get().getUserAccountInformations().getAccountReferenceTransaction());
+			hr.setAccountReferenceTransaction(h.getAccount_reference_transaction());
 			hr.setSoldAccount(h.getSoldAccount());
 			listHistoryResponse.add(hr);
 
 		}
-		// listHistoryResponse =
-		// dtoMapper.mapHistory(u.get().getUserAccountInformations().getHistoryTransaction());
 		return listHistoryResponse;
 	}
 
@@ -209,7 +216,7 @@ public class TransactionService implements TransacService {
 	 * @Description get account sold situation
 	 */
 	@Override
-	public AccountSituation accountSituation(UserBuddy buddy) {
+	public AccountSituation accountSituation(Buddy buddy) {
 		AccountSituation accountSituation = new AccountSituation();
 		Optional<User> user = Optional.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
 		if (!user.isPresent()) {
@@ -227,10 +234,15 @@ public class TransactionService implements TransacService {
 	 * @Description method for delete a buddy
 	 */
 	@Override
-	public String deleteBuddy(UserBuddy buddy) {
-
+	public String deleteBuddy(Buddy buddy) {
+		if (buddy == null) {
+			ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("buddy informations is null");
+			throw new RuntimeException("buddy informations is null");
+		}
+		
 		Optional<User> ug = Optional.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserGetter()));
 		Optional<User> us = Optional.ofNullable(userRepository.findByUserReferenceTransaction(buddy.getUserSetter()));
+		
 		if (ug.isPresent()) {
 			ug.get().getUserAccountInformations().getUserPartner_account().removeIf(u -> u.getUserAccountInformations()
 					.getAccountReferenceTransaction().contains(buddy.getUserSetter()));

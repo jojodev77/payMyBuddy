@@ -5,7 +5,7 @@ import pmb.pmb.model.User;
 import lombok.Data;
 
 @Data
-public class UserBuddy {
+public class Buddy {
 	String userGetter;
 	String userSetter;
 	double amount;

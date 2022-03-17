@@ -1,12 +1,9 @@
 package pmb.pmb.controllerTest;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.mockito.Mockito.lenient;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import javax.swing.text.View;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,32 +14,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.LinkedMultiValueMap;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import pmb.pmb.controller.AuthController;
 import pmb.pmb.controller.TransactionController;
-import pmb.pmb.dto.AddBuddy;
 import pmb.pmb.dto.AddCash;
-import pmb.pmb.dto.LoginRequest;
-import pmb.pmb.dto.UserBuddy;
+import pmb.pmb.dto.Buddy;
 import pmb.pmb.service.TransactionService;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.text.View;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.lenient;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.User;
 
 @ExtendWith(MockitoExtension.class)
 public class TransactionControllerTest {
@@ -69,7 +48,7 @@ public class TransactionControllerTest {
 		// GIVEN
 		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json",
 				java.nio.charset.Charset.forName("UTF-8"));
-		AddBuddy buddy = new AddBuddy();
+		Buddy buddy = new Buddy();
 		String message = "";
 		buddy.setUserSetter("pmbaminminb");
 		buddy.setUserGetter("pmbt@tttotb");
@@ -91,7 +70,7 @@ public class TransactionControllerTest {
 		// GIVEN
 		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json",
 				java.nio.charset.Charset.forName("UTF-8"));
-		AddBuddy addBuddy = new AddBuddy();
+		Buddy addBuddy = new Buddy();
 		addBuddy.setUserSetter(null);
 		addBuddy.setUserGetter(null);
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -120,7 +99,7 @@ public class TransactionControllerTest {
 		// GIVEN
 		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json",
 				java.nio.charset.Charset.forName("UTF-8"));
-		UserBuddy addBuddy = new UserBuddy();
+		Buddy addBuddy = new Buddy();
 		addBuddy.setUserSetter("pmbaminminb");
 		addBuddy.setUserGetter("pmbt@tttotb");
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -149,7 +128,7 @@ public class TransactionControllerTest {
 		// GIVEN
 		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json",
 				java.nio.charset.Charset.forName("UTF-8"));
-		UserBuddy addBuddy = new UserBuddy();
+		Buddy addBuddy = new Buddy();
 		addBuddy.setUserSetter(null);
 		addBuddy.setUserGetter(null);
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -178,7 +157,7 @@ public class TransactionControllerTest {
 		// GIVEN
 		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json",
 				java.nio.charset.Charset.forName("UTF-8"));
-		UserBuddy userBuddy = new UserBuddy();
+		Buddy userBuddy = new Buddy();
 		userBuddy.setUserSetter("pmbaminminb");
 		userBuddy.setUserGetter("pmbt@tttotb");
 		userBuddy.setAmount(200);
@@ -208,7 +187,7 @@ public class TransactionControllerTest {
 		// GIVEN
 		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json",
 				java.nio.charset.Charset.forName("UTF-8"));
-		UserBuddy userBuddy = new UserBuddy();
+		Buddy userBuddy = new Buddy();
 		userBuddy.setUserSetter(null);
 		userBuddy.setUserGetter(null);
 		userBuddy.setAmount(200);
@@ -238,7 +217,7 @@ public class TransactionControllerTest {
 		// GIVEN
 		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json",
 				java.nio.charset.Charset.forName("UTF-8"));
-		UserBuddy userBuddy = new UserBuddy();
+		Buddy userBuddy = new Buddy();
 		userBuddy.setUserSetter("pmbaminminb");
 		userBuddy.setUserGetter("pmbt@tttotb");
 		userBuddy.setAmount(200);
@@ -268,7 +247,7 @@ public class TransactionControllerTest {
 		// GIVEN
 		MediaType MEDIA_TYPE_JSON_UTF8 = new MediaType("application", "json",
 				java.nio.charset.Charset.forName("UTF-8"));
-		UserBuddy userBuddy = new UserBuddy();
+		Buddy userBuddy = new Buddy();
 		userBuddy.setUserSetter(null);
 		userBuddy.setUserGetter(null);
 		userBuddy.setAmount(200);
