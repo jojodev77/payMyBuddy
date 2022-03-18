@@ -79,3 +79,39 @@ CREATE TABLE IF NOT EXISTS `user_partner_account` (
   PRIMARY KEY (`id`),
   KEY `FKn9jmlv8vhl3eym88s4om0qn1o` (`user_account_informations_user_account_informations_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- Structure de la table `user_partner_account_user_account_informations`
+--
+
+DROP TABLE IF EXISTS `user_partner_account_user_account_informations`;
+CREATE TABLE IF NOT EXISTS `user_partner_account_user_account_informations` (
+  `user_account_informations_id` bigint NOT NULL,
+  `user_partner_account_id` bigint NOT NULL,
+  PRIMARY KEY (`user_account_informations_id`,`user_partner_account_id`),
+  UNIQUE KEY `UK_sgft0m2ff58wll9b6yc869bpq` (`user_partner_account_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+-- Structure de la table `user_role`
+--
+
+DROP TABLE IF EXISTS `user_role`;
+CREATE TABLE IF NOT EXISTS `user_role` (
+  `user_id` bigint NOT NULL,
+  `role_id` bigint NOT NULL,
+  PRIMARY KEY (`user_id`,`role_id`),
+  KEY `FKa68196081fvovjhkek5m97n3y` (`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+-- Structure de la table `user_user_account_informations`
+--
+
+DROP TABLE IF EXISTS `user_user_account_informations`;
+CREATE TABLE IF NOT EXISTS `user_user_account_informations` (
+  `user_account_informations_id` bigint DEFAULT NULL,
+  `user_id` bigint NOT NULL,
+  PRIMARY KEY (`user_id`),
+  KEY `FKjhvsytcyevdculef3j8dgqf32` (`user_account_informations_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
