@@ -34,4 +34,6 @@ public class HistoryTransaction {
 	String displayName;
 	
 	int soldAccount;
+	
+	double fee;
 }

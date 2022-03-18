@@ -10,4 +10,5 @@ String displayName;
 String accountReferenceTransaction;
 LocalDateTime date;
 double soldAccount;
+double fee;
 }

@@ -43,8 +43,9 @@ public class TransactionService implements TransacService {
 	DtoMapper dtoMapper;
 
 	/**
-	 * INFORMATIONS FROM THIS METHOD UserS = userSetter = property of account UserG
-	 * = userGetter = buddy partner
+	 * INFORMATIONS ABOUT NAMING METHOD
+	 * UserS = userSetter = property of account UserG
+	 * UserG = userGetter = buddy partner
 	 */
 
 	/**
@@ -129,6 +130,7 @@ public class TransactionService implements TransacService {
 			historyTransaction.setUser_account_informations(userS.get().getUserAccountInformations());
 			historyTransaction.setAccount_reference_transaction(
 					userG.get().getUserAccountInformations().getAccountReferenceTransaction());
+			historyTransaction.setFee(buddy.getAmount() * 0.5/100);
 
 			lht.add(historyTransaction);
 			userS.get().getUserAccountInformations().setHistoryTransaction(lht);
@@ -206,6 +208,7 @@ public class TransactionService implements TransacService {
 			hr.setSoldAccount(h.getSoldAccount());
 			hr.setAccountReferenceTransaction(h.getAccount_reference_transaction());
 			hr.setSoldAccount(h.getSoldAccount());
+			hr.setFee(h.getFee());
 			listHistoryResponse.add(hr);
 
 		}
@@ -252,7 +255,7 @@ public class TransactionService implements TransacService {
 		} else {
 			throw new RuntimeException("not user found");
 		}
-		return "buddy " + buddy.getUserSetter() + "delete";
+		return "your buddy " + buddy.getUserSetter() + "delete";
 	}
 
 }
