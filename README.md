@@ -33,3 +33,49 @@ CREATE TABLE IF NOT EXISTS `role` (
   `name` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`role_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- Structure de la table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE IF NOT EXISTS `user` (
+  `user_id` bigint NOT NULL AUTO_INCREMENT,
+  `display_name` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `email` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `enabled` bit(1) DEFAULT NULL,
+  `first_name` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `last_name` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `provider` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `provider_user_id` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+-- Structure de la table `user_account_informations`
+--
+
+DROP TABLE IF EXISTS `user_account_informations`;
+CREATE TABLE IF NOT EXISTS `user_account_informations` (
+  `user_account_informations_id` bigint NOT NULL AUTO_INCREMENT,
+  `account_reference_transaction` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `number_account` int NOT NULL,
+  `sold_account` int NOT NULL,
+  `state` bit(1) NOT NULL,
+  `user_user_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`user_account_informations_id`),
+  KEY `FK7o116xl9hbtvv8bywchgqs5th` (`user_user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- Structure de la table `user_partner_account`
+--
+
+DROP TABLE IF EXISTS `user_partner_account`;
+CREATE TABLE IF NOT EXISTS `user_partner_account` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `display_name` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `user_ref_transaction` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `user_account_informations_user_account_informations_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKn9jmlv8vhl3eym88s4om0qn1o` (`user_account_informations_user_account_informations_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
